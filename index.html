@@ -164,9 +164,110 @@ function freshFinding(){return{id:Date.now()+'',area:'',action:'',description:''
 
 // ── STORAGE ────────────────────────────────────────────────────────────────────
 function loadAll(){try{return JSON.parse(localStorage.getItem('wr_insp')||'{}');}catch(e){return{};}}
-function saveInsp(){if(VIEW!=='inspection')return;try{const a=loadAll();a[S.id]=S;localStorage.setItem('wr_insp',JSON.stringify(a));}catch(e){}}
-function deleteInsp(id){try{const a=loadAll();delete a[id];localStorage.setItem('wr_insp',JSON.stringify(a));}catch(e){}}
-function autoSave(){saveInsp();}
+const LS_INDEX='wr_index'; // list of inspection IDs
+const LS_PRE='wr_insp_';  // prefix for per-inspection keys
+
+function loadAll(){
+  try{
+    const ids=JSON.parse(localStorage.getItem(LS_INDEX)||'[]');
+    const out={};
+    ids.forEach(id=>{
+      try{const v=localStorage.getItem(LS_PRE+id);if(v)out[id]=JSON.parse(v);}catch(e){}
+    });
+    return out;
+  }catch(e){return{};}
+}
+
+// Compress a base64 dataURL to 800px / 60% jpeg for storage
+function compressForStorage(dataUrl){
+  return new Promise(r=>{
+    const img=new Image();
+    img.onload=()=>{
+      const MAX=800;
+      let w=img.width,h=img.height;
+      if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+      else if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+      const c=document.createElement('canvas');
+      c.width=w;c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      r(c.toDataURL('image/jpeg',0.60));
+    };
+    img.onerror=()=>r(dataUrl);
+    img.src=dataUrl;
+  });
+}
+
+// Compress all photo urls in the inspection state before saving
+async function compressStatePhotos(state){
+  const s=JSON.parse(JSON.stringify(state));
+  const ELEVS2=['front','right','rear','left'];
+  async function compArr(arr){
+    for(let i=0;i<arr.length;i++){
+      if(arr[i]&&arr[i].url&&arr[i].url.startsWith('data:')){
+        arr[i].url=await compressForStorage(arr[i].url);
+      }
+    }
+  }
+  for(const e of ELEVS2){
+    await compArr(s.elev[e].ov);
+    await compArr(s.elev[e].cu);
+    for(const f of (s.elev[e].findings||[])) await compArr(f.photos||[]);
+  }
+  await compArr(s.roof.ovPhotos||[]);
+  await compArr(s.roof.accPhotos||[]);
+  if(s.slopes){
+    for(const k of ELEVS2){
+      await compArr(s.slopes[k].ov);
+      await compArr(s.slopes[k].nt);
+      await compArr(s.slopes[k].ip);
+    }
+  }
+  for(const f of (s.roof.findings||[])) await compArr(f.photos||[]);
+  return s;
+}
+
+async function saveInsp(){
+  if(VIEW!=='inspection')return;
+  try{
+    const compressed=await compressStatePhotos(S);
+    const json=JSON.stringify(compressed);
+    localStorage.setItem(LS_PRE+S.id, json);
+    // Update index
+    const ids=JSON.parse(localStorage.getItem(LS_INDEX)||'[]');
+    if(!ids.includes(S.id)){ids.unshift(S.id);localStorage.setItem(LS_INDEX,JSON.stringify(ids));}
+    const kb=Math.round(json.length/1024);
+    console.log(`Saved inspection ${S.id} — ${kb}KB`);
+  }catch(e){
+    console.warn('Save failed — storage may be full:',e);
+    // Try saving without photos as fallback
+    try{
+      const fallback=JSON.parse(JSON.stringify(S));
+      ['front','right','rear','left'].forEach(e=>{
+        fallback.elev[e].ov=[];fallback.elev[e].cu=[];
+        (fallback.elev[e].findings||[]).forEach(f=>f.photos=[]);
+      });
+      fallback.roof.ovPhotos=[];fallback.roof.accPhotos=[];
+      if(fallback.slopes)['front','right','rear','left'].forEach(k=>{fallback.slopes[k].ov=[];fallback.slopes[k].nt=[];fallback.slopes[k].ip=[];});
+      (fallback.roof.findings||[]).forEach(f=>f.photos=[]);
+      localStorage.setItem(LS_PRE+S.id,JSON.stringify(fallback));
+      console.warn('Saved without photos due to storage limit');
+    }catch(e2){console.error('Fallback save also failed');}
+  }
+}
+
+function deleteInsp(id){
+  try{
+    localStorage.removeItem(LS_PRE+id);
+    const ids=JSON.parse(localStorage.getItem(LS_INDEX)||'[]');
+    localStorage.setItem(LS_INDEX,JSON.stringify(ids.filter(i=>i!==id)));
+  }catch(e){}
+}
+
+let _saveTimer=null;
+function autoSave(){
+  clearTimeout(_saveTimer);
+  _saveTimer=setTimeout(()=>saveInsp(),1200);
+}
 
 // ── PHOTOS ─────────────────────────────────────────────────────────────────────
 function readFile(f){
