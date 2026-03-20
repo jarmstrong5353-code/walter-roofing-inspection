@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#2D5016">
+<title>Walter Roofing — Inspection</title>
+<style>
+:root{--g:#2D5016;--gd:#1e3a0e;--gl:#EAF2E3;--gm:#C5DFB0;--gb:#3a6b1e;--am:#FFF3CD;--ab:#856404;--rl:#FDECEA;--rd:#C0392B;--bl:#EBF3FB;--bdr:#D9D9D9;--gray:#F5F5F5;--tx:#2c2c2c;--txm:#666;--wh:#fff;--r:8px;--storm:#1565C0;--storml:#E3F2FD;--retail:#5D4037;--retaill:#EFEBE9}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-size:14px;color:var(--tx);background:#ccc;min-height:100vh}
+.app{max-width:600px;margin:0 auto;background:var(--wh);min-height:100vh;display:flex;flex-direction:column}
+.hdr{background:var(--g);color:#fff;padding:12px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.hdr-logo{width:32px;height:32px;background:rgba(255,255,255,.15);border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;flex-shrink:0}
+.hdr-info{flex:1}.hdr-title{font-size:15px;font-weight:600}.hdr-sub{font-size:11px;opacity:.75;margin-top:1px}
+.hdr-badge{background:rgba(255,255,255,.2);border-radius:20px;padding:3px 9px;font-size:11px;font-weight:600;flex-shrink:0}
+.prog-wrap{background:var(--gd);height:3px;flex-shrink:0}.prog-bar{height:3px;background:var(--gm);transition:width .3s}
+.snav{display:flex;overflow-x:auto;background:#f9f9f9;border-bottom:1px solid var(--bdr);scrollbar-width:none;padding:0 12px;flex-shrink:0}
+.snav::-webkit-scrollbar{display:none}
+.sp{flex-shrink:0;padding:9px 12px;font-size:11px;font-weight:500;color:var(--txm);border-bottom:2px solid transparent;cursor:pointer;white-space:nowrap;transition:all .2s}
+.sp.active{color:var(--g);border-bottom-color:var(--g);font-weight:700}.sp.done{color:var(--g)}.sp.done::before{content:'✓ '}
+.main{flex:1;overflow-y:auto;padding:16px 16px 90px}
+.bnav{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--bdr);background:var(--wh);flex-shrink:0}
+.btn{flex:1;padding:12px;border-radius:var(--r);font-size:14px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:inherit}.btn:active{transform:scale(.98)}
+.btnp{background:var(--g);color:#fff}.btnp:hover{background:var(--gb)}
+.btns{background:var(--gray);color:var(--tx);border:1.5px solid var(--bdr);flex:0;padding:12px 14px;font-size:13px}
+.btng{background:var(--gd);color:#fff}
+.stitle{font-size:18px;font-weight:700;color:var(--g);margin-bottom:3px}
+.ssub{font-size:12px;color:var(--txm);margin-bottom:14px;line-height:1.5}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:700;color:var(--txm);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.field input,.field select,.field textarea{width:100%;border:1.5px solid var(--bdr);border-radius:var(--r);padding:10px 12px;font-size:14px;color:var(--tx);background:var(--wh);-webkit-appearance:none;font-family:inherit;transition:border-color .2s}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--g)}
+.field textarea{resize:vertical;min-height:65px}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.blabel{font-size:12px;font-weight:700;color:var(--tx);margin-bottom:7px;margin-top:2px}
+.dv{height:1px;background:var(--bdr);margin:14px 0}
+.icard{background:var(--bl);border:1px solid #b3d4f0;border-radius:var(--r);padding:9px 12px;margin-bottom:12px;font-size:12px;color:#1a4a7a;line-height:1.5}
+.wcard{background:var(--am);border:1px solid #d4a017;border-radius:var(--r);padding:9px 12px;margin-bottom:12px;font-size:12px;color:#5c3d00;line-height:1.5}
+.lcard{background:var(--rl);border:1px solid var(--rd);border-radius:var(--r);padding:9px 12px;margin-bottom:12px;font-size:12px;color:#7a1a1a;line-height:1.5}
+.gcard{background:var(--gl);border:1px solid var(--gm);border-radius:var(--r);padding:9px 12px;margin-bottom:12px;font-size:12px;color:#1a3a0a;line-height:1.5}
+.pz{border:2px dashed var(--bdr);border-radius:var(--r);padding:14px;text-align:center;cursor:pointer;background:var(--gray);position:relative;transition:all .2s}
+.pz:hover{border-color:var(--g);background:var(--gl)}
+.pz input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.pz-txt{font-size:12px;color:var(--txm)}.pz-hint{font-size:11px;color:var(--txm);margin-top:2px}
+.pgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
+.pthumb{position:relative;border-radius:5px;overflow:hidden;border:1px solid var(--bdr)}
+.pthumb img{width:100%;height:95px;object-fit:cover;display:block}
+.pthumb .rmb{position:absolute;top:3px;right:3px;background:rgba(0,0,0,.65);color:#fff;border:none;border-radius:50%;width:20px;height:20px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.pthumb .pcnt{font-size:10px;color:var(--txm);text-align:center;padding:2px 4px;background:var(--gray);border-top:1px solid var(--bdr)}
+.dchecks{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:4px}
+.chi{display:flex;align-items:center;gap:7px;padding:8px 10px;border:1.5px solid var(--bdr);border-radius:var(--r);cursor:pointer;transition:all .2s;user-select:none}
+.chi:hover,.chi.on{border-color:var(--g);background:var(--gl)}
+.chb{width:16px;height:16px;border:2px solid var(--bdr);border-radius:3px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.chi.on .chb{background:var(--g);border-color:var(--g)}.chm{color:#fff;font-size:10px;display:none}.chi.on .chm{display:block}
+.chl{font-size:12px;color:var(--tx);line-height:1.3}
+.ctr-wrap{display:flex;align-items:center;border:1.5px solid var(--bdr);border-radius:var(--r);overflow:hidden}
+.ctr-btn{width:48px;height:48px;border:none;background:var(--gray);font-size:20px;cursor:pointer;color:var(--tx);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:inherit}.ctr-btn:active{background:var(--gm)}
+.ctr-tap{flex:1;height:48px;border:none;background:var(--g);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}.ctr-tap:active{background:var(--gd)}
+.ctr-in{width:62px;height:48px;border:none;border-left:1.5px solid var(--bdr);text-align:center;font-size:20px;font-weight:700;color:var(--g);background:#fff;font-family:inherit}.ctr-in:focus{outline:none;background:var(--gl)}
+.thnote{font-size:11px;color:var(--txm);margin-top:5px}.thnote.pass{color:#2e7d32;font-weight:700}.thnote.warn{color:var(--ab);font-weight:600}
+.comp-table{width:100%;border-collapse:collapse;margin-bottom:4px}
+.comp-table td{padding:7px 8px;border-bottom:1px solid #f0f0f0;font-size:12px;vertical-align:middle}
+.comp-table td:first-child{font-weight:500}.comp-table td:last-child{width:90px}
+.comp-table input{width:76px;border:1.5px solid var(--bdr);border-radius:5px;padding:6px 8px;font-size:14px;font-weight:600;color:var(--g);text-align:center;font-family:inherit;background:var(--wh)}
+.comp-table input:focus{outline:none;border-color:var(--g);background:var(--gl)}
+/* FINDINGS */
+.finding-card{border:1px solid var(--bdr);border-radius:var(--r);padding:12px;margin-bottom:10px;background:#fff}
+.fc-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;gap:8px}
+.fc-num{width:22px;height:22px;background:var(--g);color:#fff;border-radius:50%;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.fc-del{background:none;border:none;color:var(--rd);font-size:18px;cursor:pointer;padding:0;line-height:1;flex-shrink:0}
+.action-row{display:flex;gap:6px;margin-bottom:8px}
+.act-btn{flex:1;padding:8px 4px;border:1.5px solid var(--bdr);border-radius:var(--r);font-size:11px;font-weight:700;cursor:pointer;text-align:center;background:var(--wh);font-family:inherit;transition:all .2s;text-transform:uppercase;letter-spacing:.3px}
+.act-repair{background:var(--am)!important;border-color:var(--ab)!important;color:var(--ab)!important}
+.act-replace{background:var(--rl)!important;border-color:var(--rd)!important;color:var(--rd)!important}
+.act-monitor{background:var(--bl)!important;border-color:#2E75B6!important;color:#2E75B6!important}
+.add-finding-btn{width:100%;padding:11px;border:2px dashed var(--gm);border-radius:var(--r);background:var(--gl);color:var(--g);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px;transition:all .2s}
+.add-finding-btn:hover{background:var(--gm)}
+/* HOME */
+.home-hero{background:var(--g);padding:26px 20px 22px;text-align:center;color:#fff}
+.home-hero h1{font-size:21px;font-weight:700;margin-bottom:3px}
+.home-hero p{font-size:12px;color:var(--gm)}
+.home-content{padding:18px 16px}
+.home-new-btn{display:block;width:100%;padding:15px;background:var(--g);color:#fff;border:none;border-radius:var(--r);font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:18px;transition:background .2s}
+.home-new-btn:hover{background:var(--gb)}
+.saved-hdr{font-size:12px;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.saved-card{border:1px solid var(--bdr);border-radius:var(--r);padding:11px 13px;margin-bottom:8px;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:10px;background:var(--wh)}
+.saved-card:hover{border-color:var(--g);background:var(--gl)}
+.type-badge{flex-shrink:0;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px}
+.badge-storm{background:var(--storml);color:var(--storm);border:1px solid #90CAF9}
+.badge-retail{background:var(--retaill);color:var(--retail);border:1px solid #BCAAA4}
+.saved-info{flex:1}.saved-addr{font-size:13px;font-weight:600;color:var(--tx)}.saved-meta{font-size:11px;color:var(--txm);margin-top:1px}
+.saved-del{background:none;border:none;color:#ccc;font-size:18px;cursor:pointer;padding:4px;transition:color .2s;flex-shrink:0}.saved-del:hover{color:var(--rd)}
+.empty-state{text-align:center;padding:28px 20px;color:var(--txm)}
+/* TYPE PICKER */
+.type-picker{padding:22px 16px}
+.type-picker h2{font-size:17px;font-weight:700;color:var(--g);margin-bottom:5px}
+.type-picker p{font-size:12px;color:var(--txm);margin-bottom:20px;line-height:1.5}
+.type-card{border:2px solid var(--bdr);border-radius:10px;padding:18px;margin-bottom:12px;cursor:pointer;transition:all .2s;background:var(--wh);text-align:left;width:100%;font-family:inherit}
+.type-card:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.1)}
+.tc-storm{border-color:#90CAF9}.tc-storm:hover{border-color:var(--storm);background:var(--storml)}
+.tc-retail{border-color:#BCAAA4}.tc-retail:hover{border-color:var(--retail);background:var(--retaill)}
+.tc-icon{font-size:26px;margin-bottom:7px}.tc-title{font-size:15px;font-weight:700;margin-bottom:3px}
+.tc-storm .tc-title{color:var(--storm)}.tc-retail .tc-title{color:var(--retail)}
+.tc-desc{font-size:12px;color:var(--txm);line-height:1.5}
+.tc-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.tc-tag{font-size:10px;padding:2px 7px;border-radius:3px;font-weight:600}
+.tc-storm .tc-tag{background:var(--storml);color:var(--storm)}.tc-retail .tc-tag{background:var(--retaill);color:var(--retail)}
+/* REVIEW */
+.rcard{border:1px solid var(--bdr);border-radius:var(--r);overflow:hidden;margin-bottom:10px}
+.rch{background:var(--g);color:#fff;padding:8px 14px;font-size:12px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.rcb{padding:8px 14px;font-size:12px}
+.rrow{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #f0f0f0}.rrow:last-child{border:none}
+.rl2{color:var(--txm)}.rv2{font-weight:600;text-align:right;max-width:60%}
+.sib{display:inline-flex;align-items:center;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:700}
+.sipass{background:var(--gl);color:var(--g);border:1px solid var(--gm)}.siwarn{background:var(--am);color:var(--ab);border:1px solid #d4a017}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hdr">
+    <div class="hdr-logo">WR</div>
+    <div class="hdr-info"><div class="hdr-title">Walter Roofing</div><div class="hdr-sub" id="hdr-sub">Inspection App</div></div>
+    <div class="hdr-badge" id="hdr-badge" style="display:none"></div>
+  </div>
+  <div class="prog-wrap" id="pw" style="display:none"><div class="prog-bar" id="prog"></div></div>
+  <div class="snav" id="snav" style="display:none"></div>
+  <div class="main" id="mc"></div>
+  <div class="bnav" id="bnav" style="display:none">
+    <button class="btn btns" id="bb" onclick="go(-1)">← Back</button>
+    <button class="btn btnp" id="nb" onclick="go(1)">Next →</button>
+  </div>
+</div>
+<script>
+// ── CONSTANTS ──────────────────────────────────────────────────────────────────
+const SURFS=[{id:'siding',l:'Siding'},{id:'winsill',l:'Window sills'},{id:'screens',l:'Window screens'},{id:'shutters',l:'Shutters'},{id:'gutters',l:'Gutters/downspouts'},{id:'fascia',l:'Fascia/soffit'},{id:'garage',l:'Garage door'},{id:'wood',l:'Painted wood'},{id:'masonry',l:'Brick/masonry'},{id:'ac',l:'A/C condenser'}];
+const COMPS=[{id:'ventStack',l:'Vent Stacks'},{id:'pipeBoots',l:'Pipe Boots'},{id:'boxVents',l:'Box Vents'},{id:'powerVents',l:'Power Vents'},{id:'bathVents',l:'Bathroom Vents'},{id:'turbines',l:'Turbine Vents'},{id:'skylights',l:'Skylights'},{id:'chimney',l:'Chimney'},{id:'valleyMetal',l:'Valley Metal'},{id:'elecPipeBoot',l:'Electrical Pipe Boots'}];
+const ELEVS=['front','right','rear','left'];
+const SLOPES=['front','right','rear','left'];
+const EL={front:'Front',right:'Right',rear:'Rear',left:'Left'};
+const ED={front:'Primary exposure',right:'Right side',rear:'Rear elevation',left:'Left side'};
+const ACTIONS=['Repair','Replace','Monitor'];
+const STORM_STEPS=['Job Setup','Front','Right','Rear','Left','Roof','Slopes','Review'];
+const RETAIL_STEPS=['Job Setup','Front','Right','Rear','Left','Roof','Review'];
+
+// ── STATE ──────────────────────────────────────────────────────────────────────
+let VIEW='home', cur=0, S={};
+
+function freshStorm(){
+  return{type:'storm',id:Date.now()+'',
+    job:{owner:'',address:'',city:'',zip:'',stormDate:'',inspDate:'',hailSize:'',repName:'',repPhone:'',notes:''},
+    elev:{front:{ov:[],cu:[],surfaces:[],notes:''},right:{ov:[],cu:[],surfaces:[],notes:''},rear:{ov:[],cu:[],surfaces:[],notes:''},left:{ov:[],cu:[],surfaces:[],notes:''}},
+    roof:{pitch:'',gsize:'',glf:'',gdmg:false,ggdmg:false,dedmg:false,ovPhotos:[],accPhotos:[],comps:Object.fromEntries(COMPS.map(c=>[c.id,''])),notes:''},
+    slopes:{front:{ov:[],nt:[],ip:[],cnt:0,notes:''},right:{ov:[],nt:[],ip:[],cnt:0,notes:''},rear:{ov:[],nt:[],ip:[],cnt:0,notes:''},left:{ov:[],nt:[],ip:[],cnt:0,notes:''}}};
+}
+function freshRetail(){
+  return{type:'retail',id:Date.now()+'',
+    job:{owner:'',address:'',city:'',zip:'',inspDate:'',repName:'',repPhone:'',notes:''},
+    elev:{front:{ov:[],cu:[],findings:[],notes:''},right:{ov:[],cu:[],findings:[],notes:''},rear:{ov:[],cu:[],findings:[],notes:''},left:{ov:[],cu:[],findings:[],notes:''}},
+    roof:{pitch:'',gsize:'',glf:'',ovPhotos:[],accPhotos:[],comps:Object.fromEntries(COMPS.map(c=>[c.id,''])),findings:[],notes:''}};
+}
+function freshFinding(){return{id:Date.now()+'',area:'',action:'',description:'',crewNote:'',material:'',photos:[]};}
+
+// ── STORAGE ────────────────────────────────────────────────────────────────────
+function loadAll(){try{return JSON.parse(localStorage.getItem('wr_insp')||'{}');}catch(e){return{};}}
+function saveInsp(){if(VIEW!=='inspection')return;try{const a=loadAll();a[S.id]=S;localStorage.setItem('wr_insp',JSON.stringify(a));}catch(e){}}
+function deleteInsp(id){try{const a=loadAll();delete a[id];localStorage.setItem('wr_insp',JSON.stringify(a));}catch(e){}}
+function autoSave(){saveInsp();}
+
+// ── PHOTOS ─────────────────────────────────────────────────────────────────────
+function readFile(f){
+  return new Promise(r=>{
+    const fr=new FileReader();
+    fr.onload=e=>{
+      const img=new Image();
+      img.onload=()=>{
+        const MAX=1200;
+        let w=img.width,h=img.height;
+        if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}
+        else if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+        const c=document.createElement('canvas');
+        c.width=w;c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        r(c.toDataURL('image/jpeg',0.72));
+      };
+      img.src=e.target.result;
+    };
+    fr.readAsDataURL(f);
+  });
+}
+function getArr(gid){
+  if(gid.startsWith('g-e-')){const p=gid.split('-');return S.elev[p[2]][p[3]==='ov'?'ov':'cu'];}
+  if(gid==='g-roof-ov')return S.roof.ovPhotos;
+  if(gid==='g-roof-acc')return S.roof.accPhotos;
+  if(gid.startsWith('g-sl-')){const p=gid.split('-');return S.slopes[p[2]][p[3]==='ov'?'ov':p[3]==='nt'?'nt':'ip'];}
+  if(gid.startsWith('g-fc-')){const p=gid.split('-');return p[2]==='roof'?S.roof.findings[+p[3]].photos:S.elev[p[2]].findings[+p[3]].photos;}
+  return null;
+}
+async function addPhotos(gid,files){
+  const arr=getArr(gid);if(!arr)return;
+  for(const f of Array.from(files)){if(!f.type.startsWith('image/'))continue;const url=await readFile(f);arr.push({url,name:f.name});}
+  renderGrid(gid,arr);autoSave();
+}
+function renderGrid(gid,arr){
+  const g=document.getElementById(gid);if(!g||!arr)return;
+  g.innerHTML=arr.map((p,i)=>`<div class="pthumb"><img src="${p.url}" loading="lazy"><button class="rmb" onclick="rmPhoto('${gid}',${i})">✕</button><div class="pcnt">${i+1}/${arr.length}</div></div>`).join('');
+}
+function rmPhoto(gid,idx){const arr=getArr(gid);if(arr){arr.splice(idx,1);renderGrid(gid,arr);autoSave();}}
+function reRenderGrids(){
+  setTimeout(()=>{
+    ELEVS.forEach(e=>{renderGrid(`g-e-${e}-ov`,S.elev[e].ov);renderGrid(`g-e-${e}-cu`,S.elev[e].cu);(S.elev[e].findings||[]).forEach((_,i)=>renderGrid(`g-fc-${e}-${i}`,S.elev[e].findings[i].photos));});
+    renderGrid('g-roof-ov',S.roof.ovPhotos);renderGrid('g-roof-acc',S.roof.accPhotos);
+    if(S.type==='storm')SLOPES.forEach(k=>{renderGrid(`g-sl-${k}-ov`,S.slopes[k].ov);renderGrid(`g-sl-${k}-nt`,S.slopes[k].nt);renderGrid(`g-sl-${k}-ip`,S.slopes[k].ip);});
+    else(S.roof.findings||[]).forEach((_,i)=>renderGrid(`g-fc-roof-${i}`,S.roof.findings[i].photos));
+  },0);
+}
+
+// ── STORM HELPERS ──────────────────────────────────────────────────────────────
+function toggleSurf(e,id,el){const arr=S.elev[e].surfaces;const i=arr.indexOf(id);i>-1?arr.splice(i,1):arr.push(id);el.classList.toggle('on');el.querySelector('.chm').style.display=arr.includes(id)?'block':'none';autoSave();}
+function toggleRC(f,el){S.roof[f]=!S.roof[f];el.classList.toggle('on');el.querySelector('.chm').style.display=S.roof[f]?'block':'none';autoSave();}
+function adj(k,d){S.slopes[k].cnt=Math.max(0,S.slopes[k].cnt+d);const inp=document.getElementById('ci-'+k);if(inp)inp.value=S.slopes[k].cnt;updNote(k);autoSave();}
+function updNote(k){
+  const n=document.getElementById('cn-'+k);if(!n)return;
+  const c=S.slopes[k].cnt;n.className='thnote';
+  if(c>=8){n.classList.add('pass');n.textContent=`✓ ${c} impacts — functional threshold confirmed`;}
+  else if(c>0){n.classList.add('warn');n.textContent=`${c} documented — need ${8-c} more`;}
+  else n.textContent='Tap or enter count to document impacts';
+}
+
+// ── RETAIL HELPERS ─────────────────────────────────────────────────────────────
+function addFinding(t){const f=freshFinding();if(t==='roof')S.roof.findings.push(f);else S.elev[t].findings.push(f);autoSave();renderStep(cur);}
+function removeFinding(t,i){if(t==='roof')S.roof.findings.splice(i,1);else S.elev[t].findings.splice(i,1);autoSave();renderStep(cur);}
+function setAction(t,i,v,btn){
+  const f=t==='roof'?S.roof.findings[i]:S.elev[t].findings[i];
+  f.action=v;
+  btn.closest('.action-row').querySelectorAll('.act-btn').forEach(b=>b.classList.remove('act-repair','act-replace','act-monitor'));
+  btn.classList.add(v==='Repair'?'act-repair':v==='Replace'?'act-replace':'act-monitor');
+  autoSave();
+}
+function updF(t,i,field,v){if(t==='roof')S.roof.findings[i][field]=v;else S.elev[t].findings[i][field]=v;autoSave();}
+
+function findingCard(t,f,i){
+  const gid=`g-fc-${t}-${i}`;
+  return`<div class="finding-card">
+    <div class="fc-hdr">
+      <div style="display:flex;align-items:flex-start;gap:8px;flex:1">
+        <div class="fc-num">${i+1}</div>
+        <div class="field" style="margin:0;flex:1">
+          <input placeholder="Area / Surface (e.g. Ridge cap, NE corner gutter)" value="${esc(f.area)}" oninput="updF('${t}',${i},'area',this.value)" style="font-size:13px;padding:7px 10px">
+        </div>
+      </div>
+      <button class="fc-del" onclick="removeFinding('${t}',${i})">×</button>
+    </div>
+    <div class="blabel" style="font-size:11px;margin-bottom:6px">Recommended Action</div>
+    <div class="action-row">
+      <button class="act-btn ${f.action==='Repair'?'act-repair':''}" onclick="setAction('${t}',${i},'Repair',this)">Repair</button>
+      <button class="act-btn ${f.action==='Replace'?'act-replace':''}" onclick="setAction('${t}',${i},'Replace',this)">Replace</button>
+      <button class="act-btn ${f.action==='Monitor'?'act-monitor':''}" onclick="setAction('${t}',${i},'Monitor',this)">Monitor</button>
+    </div>
+    <div class="field" style="margin-bottom:8px">
+      <label>Description</label>
+      <textarea placeholder="What you observed — wear, cracking, granule loss, sealant failure, missing components..." oninput="updF('${t}',${i},'description',this.value)" style="min-height:55px">${esc(f.description)}</textarea>
+    </div>
+    <div class="field" style="margin-bottom:8px">
+      <label>Crew Notes</label>
+      <textarea placeholder="e.g. Protect rose bushes at NE corner · Add ice &amp; water at valley · Watch for dog · Steep pitch on left side" oninput="updF('${t}',${i},'crewNote',this.value)" style="min-height:50px">${esc(f.crewNote)}</textarea>
+    </div>
+    <div class="field" style="margin-bottom:8px">
+      <label>Material / Product</label>
+      <input placeholder="e.g. OC Duration, 6&quot; K-style aluminum gutter, Grace Ice &amp; Water..." value="${esc(f.material)}" oninput="updF('${t}',${i},'material',this.value)">
+    </div>
+    <div class="blabel" style="font-size:11px;margin-bottom:6px">Photos for this finding</div>
+    <div class="pz" style="padding:10px"><input type="file" accept="image/*" multiple onchange="addPhotos('${gid}',this.files)"><div class="pz-txt" style="font-size:11px">Tap to add photos</div></div>
+    <div class="pgrid" id="${gid}"></div>
+  </div>`;
+}
+
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;');}
+
+function countPhotos(){
+  let t=0;
+  ELEVS.forEach(e=>{t+=S.elev[e].ov.length+S.elev[e].cu.length;});
+  t+=(S.roof.ovPhotos||[]).length+(S.roof.accPhotos||[]).length;
+  if(S.type==='storm')SLOPES.forEach(s=>t+=S.slopes[s].ov.length+S.slopes[s].nt.length+S.slopes[s].ip.length);
+  else{ELEVS.forEach(e=>(S.elev[e].findings||[]).forEach(f=>t+=f.photos.length));(S.roof.findings||[]).forEach(f=>t+=f.photos.length);}
+  return t;
+}
+
+// ── VIEW ROUTING ───────────────────────────────────────────────────────────────
+function hide(ids){ids.forEach(id=>document.getElementById(id).style.display='none');}
+function show(id,d='block'){document.getElementById(id).style.display=d;}
+
+function showHome(){
+  VIEW='home';
+  hide(['pw','snav','bnav','hdr-badge']);
+  document.getElementById('hdr-sub').textContent='Inspection App';
+  const all=loadAll();
+  const list=Object.values(all).sort((a,b)=>b.id-a.id);
+  document.getElementById('mc').innerHTML=`
+    <div class="home-hero"><h1>Walter Roofing</h1><p>Storm &amp; Retail Inspection Tool</p></div>
+    <div class="home-content">
+      <button class="home-new-btn" onclick="showTypePicker()">+ New Inspection</button>
+      <div class="saved-hdr">Saved Inspections (${list.length})</div>
+      ${list.length===0?`<div class="empty-state"><div style="font-size:36px;margin-bottom:8px;opacity:.4">📋</div><p style="font-size:13px;color:var(--txm)">No saved inspections yet.<br>Tap "New Inspection" to get started.</p></div>`:
+        list.map(insp=>`
+          <div class="saved-card" onclick="loadInsp('${insp.id}')">
+            <span class="type-badge ${insp.type==='storm'?'badge-storm':'badge-retail'}">${insp.type}</span>
+            <div class="saved-info">
+              <div class="saved-addr">${esc(insp.job.address)||'Address not set'}</div>
+              <div class="saved-meta">${esc(insp.job.repName)||'Rep not set'} · ${insp.type==='storm'?(insp.job.stormDate||'No date'):(insp.job.inspDate||'No date')}</div>
+            </div>
+            <button class="saved-del" onclick="event.stopPropagation();delInsp('${insp.id}')">×</button>
+          </div>`).join('')}
+    </div>`;
+}
+
+function delInsp(id){if(confirm('Delete this inspection? This cannot be undone.')){deleteInsp(id);showHome();}}
+
+function showTypePicker(){
+  VIEW='typepicker';
+  hide(['pw','snav','bnav','hdr-badge']);
+  document.getElementById('hdr-sub').textContent='New Inspection';
+  document.getElementById('mc').innerHTML=`
+    <div class="type-picker">
+      <h2>Inspection Type</h2>
+      <p>Choose the type of inspection. This sets the workflow and report format.</p>
+      <button class="type-card tc-storm" onclick="startInsp('storm')">
+        <div class="tc-icon">⛈</div>
+        <div class="tc-title">Storm Inspection</div>
+        <div class="tc-desc">Document hail and wind event property conditions for evidence package. Includes test square impact counts, soft metal documentation, and slope-by-slope condition photos.</div>
+        <div class="tc-tags"><span class="tc-tag">Hail impact counts</span><span class="tc-tag">Test squares</span><span class="tc-tag">Evidence package</span><span class="tc-tag">Soft metals</span></div>
+      </button>
+      <button class="type-card tc-retail" onclick="startInsp('retail')">
+        <div class="tc-icon">🏠</div>
+        <div class="tc-title">Retail Inspection</div>
+        <div class="tc-desc">Document property condition, wear, and repair or replacement needs. Per-finding descriptions, recommended actions, crew notes, and material recommendations.</div>
+        <div class="tc-tags"><span class="tc-tag">Repair / Replace / Monitor</span><span class="tc-tag">Crew notes</span><span class="tc-tag">Scope document</span></div>
+      </button>
+      <button class="btn btns" style="width:100%;margin-top:4px" onclick="showHome()">← Back</button>
+    </div>`;
+}
+
+function startInsp(type){S=type==='storm'?freshStorm():freshRetail();cur=0;showInspection();}
+function loadInsp(id){
+  const a=loadAll();if(!a[id])return;
+  S=a[id];
+  if(!S.roof.findings)S.roof.findings=[];
+  ELEVS.forEach(e=>{if(!S.elev[e].findings)S.elev[e].findings=[];});
+  cur=0;showInspection();
+}
+
+function showInspection(){
+  VIEW='inspection';
+  show('pw');show('bnav','flex');show('hdr-badge');
+  const labels=S.type==='storm'?STORM_STEPS:RETAIL_STEPS;
+  document.getElementById('snav').style.display='flex';
+  document.getElementById('snav').innerHTML=labels.map((l,i)=>`<div class="sp" data-s="${i}" onclick="cur=${i};renderStep(cur)">${l}</div>`).join('');
+  renderStep(cur);
+}
+
+// ── NAV ────────────────────────────────────────────────────────────────────────
+function updHdr(s){
+  const labels=S.type==='storm'?STORM_STEPS:RETAIL_STEPS;
+  document.getElementById('hdr-sub').textContent=labels[s]||'Inspection';
+  document.getElementById('hdr-badge').textContent=`${s+1}/${labels.length}`;
+  document.getElementById('prog').style.width=`${((s+1)/labels.length)*100}%`;
+}
+function updNav(s){
+  document.querySelectorAll('.sp').forEach(p=>{const ps=+p.dataset.s;p.classList.remove('active','done');if(ps===s)p.classList.add('active');else if(ps<s)p.classList.add('done');});
+  document.querySelector(`.sp[data-s="${s}"]`)?.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});
+}
+function updBtns(s){
+  const total=(S.type==='storm'?STORM_STEPS:RETAIL_STEPS).length;
+  document.getElementById('bb').style.display=s===0?'none':'';
+  const nb=document.getElementById('nb');
+  if(s===total-1)nb.style.display='none';
+  else{nb.style.display='';nb.textContent=s===total-2?'Review →':'Next →';}
+}
+function go(d){
+  const total=(S.type==='storm'?STORM_STEPS:RETAIL_STEPS).length;
+  const ns=cur+d;
+  if(ns>=0&&ns<total){cur=ns;renderStep(cur);}
+  else if(d===-1&&cur===0)showHome();
+}
+
+// ── RENDER ROUTER ──────────────────────────────────────────────────────────────
+function renderStep(s){
+  const mc=document.getElementById('mc');mc.innerHTML='';mc.scrollTop=0;
+  if(S.type==='storm'){
+    if(s===0)mc.innerHTML=rJobStorm();
+    else if(s>=1&&s<=4)mc.innerHTML=rElevStorm(ELEVS[s-1]);
+    else if(s===5)mc.innerHTML=rRoofStorm();
+    else if(s===6)mc.innerHTML=rSlopes();
+    else mc.innerHTML=rReviewStorm();
+  } else {
+    if(s===0)mc.innerHTML=rJobRetail();
+    else if(s>=1&&s<=4)mc.innerHTML=rElevRetail(ELEVS[s-1]);
+    else if(s===5)mc.innerHTML=rRoofRetail();
+    else mc.innerHTML=rReviewRetail();
+  }
+  updHdr(s);updNav(s);updBtns(s);
+  if(S.type==='storm')SLOPES.forEach(k=>updNote(k));
+  reRenderGrids();autoSave();
+}
+
+// ── STORM STEPS ────────────────────────────────────────────────────────────────
+function bind(field){return `value="${esc(S.job[field])}" oninput="S.job.${field}=this.value;autoSave()"`;}
+
+function rJobStorm(){return`<div class="stitle">Job Setup</div>
+<div class="ssub">Storm inspection — property and storm event information.</div>
+<div class="lcard"><strong>Iowa Contractor Notice:</strong> This report documents property conditions for the homeowner's reference only. Walter Roofing does not file claims or negotiate settlements with insurance carriers.</div>
+<div class="field"><label>Property Owner *</label><input ${bind('owner')} placeholder="First and Last Name"></div>
+<div class="field"><label>Property Address *</label><input ${bind('address')} placeholder="Street address"></div>
+<div class="frow">
+  <div class="field"><label>City</label><input ${bind('city')} placeholder="City"></div>
+  <div class="field"><label>ZIP</label><input ${bind('zip')} placeholder="ZIP"></div>
+</div>
+<div class="dv"></div>
+<div class="frow">
+  <div class="field"><label>Storm Date *</label><input type="date" ${bind('stormDate')}></div>
+  <div class="field"><label>Inspection Date *</label><input type="date" ${bind('inspDate')}></div>
+</div>
+<div class="field"><label>Hail Recon Verified Hail Size</label><input ${bind('hailSize')} placeholder='e.g. 1.75"'></div>
+<div class="dv"></div>
+<div class="frow">
+  <div class="field"><label>Rep Name *</label><input ${bind('repName')} placeholder="Your name"></div>
+  <div class="field"><label>Rep Phone</label><input type="tel" ${bind('repPhone')} placeholder="Cell"></div>
+</div>
+<div class="field"><label>Initial Observations</label><textarea placeholder="Storm path, property notes..." oninput="S.job.notes=this.value;autoSave()">${esc(S.job.notes)}</textarea></div>`;}
+
+function rElevStorm(e){const el=S.elev[e];return`<div class="stitle">${EL[e]} Elevation</div>
+<div class="ssub">${ED[e]} — Overview photos first, then close-up condition documentation.</div>
+<div class="icard">Include a tape measure in soft metal close-up photos.</div>
+<div class="blabel">Overview Photos</div>
+<div class="pz"><input type="file" accept="image/*" multiple onchange="addPhotos('g-e-${e}-ov',this.files)"><div class="pz-txt">Tap to add overview photos</div><div class="pz-hint">Wide shots of full elevation</div></div>
+<div class="pgrid" id="g-e-${e}-ov"></div>
+<div class="dv"></div>
+<div class="blabel">Surfaces Documented</div>
+<div class="dchecks">${SURFS.map(d=>`<div class="chi ${el.surfaces.includes(d.id)?'on':''}" onclick="toggleSurf('${e}','${d.id}',this)"><div class="chb"><span class="chm" style="display:${el.surfaces.includes(d.id)?'block':'none'}">✓</span></div><span class="chl">${d.l}</span></div>`).join('')}</div>
+<div class="dv"></div>
+<div class="blabel">Close-Up Condition Photos</div>
+<div class="pz"><input type="file" accept="image/*" multiple onchange="addPhotos('g-e-${e}-cu',this.files)"><div class="pz-txt">Tap to add close-up photos</div><div class="pz-hint">Chalk-marked impacts, conditions, measurement references</div></div>
+<div class="pgrid" id="g-e-${e}-cu"></div>
+<div class="field" style="margin-top:12px"><label>Elevation Notes</label><textarea placeholder="Additional observations..." oninput="S.elev['${e}'].notes=this.value;autoSave()">${esc(el.notes)}</textarea></div>`;}
+
+function rRoofStorm(){const r=S.roof;return`<div class="stitle">Roof Overview & Accessories</div>
+<div class="ssub">Pitch, gutters, overviews, and component inventory.</div>
+<div class="field"><label>Roof Pitch</label><input value="${esc(r.pitch)}" placeholder='e.g. 6/12 or "6/12 primary, dormers 4/12"' oninput="S.roof.pitch=this.value;autoSave()"></div>
+<div class="dv"></div>
+<div class="blabel">Overhangs & Gutters</div>
+<div class="frow">
+  <div class="field"><label>Gutter Size</label>
+    <select onchange="S.roof.gsize=this.value;autoSave()"><option value="">Select...</option><option ${r.gsize==='5'?'selected':''} value="5">5" Aluminum</option><option ${r.gsize==='6'?'selected':''} value="6">6" Aluminum</option><option ${r.gsize==='other'?'selected':''} value="other">Other</option><option ${r.gsize==='none'?'selected':''} value="none">No gutters</option></select>
+  </div>
+  <div class="field"><label>Lineal Feet</label><input type="number" value="${esc(r.glf)}" placeholder="Total LF" oninput="S.roof.glf=this.value;autoSave()"></div>
+</div>
+<div class="dchecks" style="grid-template-columns:1fr">
+  <div class="chi ${r.gdmg?'on':''}" onclick="toggleRC('gdmg',this)"><div class="chb"><span class="chm" style="display:${r.gdmg?'block':'none'}">✓</span></div><span class="chl">Gutters — impacts visible, photographed</span></div>
+  <div class="chi ${r.ggdmg?'on':''}" onclick="toggleRC('ggdmg',this)"><div class="chb"><span class="chm" style="display:${r.ggdmg?'block':'none'}">✓</span></div><span class="chl">Gutter guards/screens photographed</span></div>
+  <div class="chi ${r.dedmg?'on':''}" onclick="toggleRC('dedmg',this)"><div class="chb"><span class="chm" style="display:${r.dedmg?'block':'none'}">✓</span></div><span class="chl">Drip edge flashing photographed</span></div>
+</div>
+<div class="dv"></div>
+<div class="blabel">Roof Overview Photos</div>
+<div class="pz"><input type="file" accept="image/*" multiple onchange="addPhotos('g-roof-ov',this.files)"><div class="pz-txt">Full slope views, valleys, ridge</div></div>
+<div class="pgrid" id="g-roof-ov"></div>
+<div class="dv"></div>
+<div class="blabel">Accessory & Penetration Photos</div>
+<div class="pz"><input type="file" accept="image/*" multiple onchange="addPhotos('g-roof-acc',this.files)"><div class="pz-txt">Vents, boots, gutters, drip edge</div></div>
+<div class="pgrid" id="g-roof-acc"></div>
+<div class="dv"></div>
+<div class="blabel">Component Counts</div>
+<table class="comp-table">${COMPS.map(c=>`<tr><td>${c.l}</td><td><input type="number" min="0" placeholder="—" value="${esc(r.comps[c.id])}" oninput="S.roof.comps['${c.id}']=this.value;autoSave()"></td></tr>`).join('')}</table>
+<div class="field" style="margin-top:8px"><label>Roof Notes</label><textarea placeholder="General roof notes..." oninput="S.roof.notes=this.value;autoSave()">${esc(r.notes)}</textarea></div>`;}
+
+function rSlopes(){return`<div class="stitle">Slopes & Test Squares</div>
+<div class="ssub">One slope at a time — overview, count, notation photo, close-ups.</div>
+<div class="icard">Standard: 8+ impacts per 10'×10' test square confirms functional hail exposure. Tap +1 per impact found.</div>
+${SLOPES.map((k,idx)=>`${idx>0?'<div class="dv"></div>':''}
+<div style="background:var(--gl);border-radius:var(--r);padding:8px 12px;margin-bottom:12px"><b style="color:var(--g);font-size:13px">${EL[k]} Slope</b></div>
+<div class="blabel">Overview Photo</div>
+<div class="pz" style="padding:12px"><input type="file" accept="image/*" multiple onchange="addPhotos('g-sl-${k}-ov',this.files)"><div class="pz-txt" style="font-size:12px">Wide shot of full slope</div></div>
+<div class="pgrid" id="g-sl-${k}-ov"></div>
+<div class="blabel" style="margin-top:13px">Test Square Impact Count</div>
+<div class="ctr-wrap"><button class="ctr-btn" onclick="adj('${k}',-1)">−</button><button class="ctr-tap" onclick="adj('${k}',1)">TAP +1 PER IMPACT</button><input class="ctr-in" type="number" min="0" value="${S.slopes[k].cnt}" id="ci-${k}" oninput="S.slopes['${k}'].cnt=parseInt(this.value)||0;updNote('${k}');autoSave()"></div>
+<div class="thnote" id="cn-${k}">Tap or enter count to document impacts</div>
+<div class="blabel" style="margin-top:13px">Chalk Notation Photo</div>
+<div class="pz" style="padding:12px"><input type="file" accept="image/*" multiple onchange="addPhotos('g-sl-${k}-nt',this.files)"><div class="pz-txt" style="font-size:12px">Photo of chalk notation on slope</div></div>
+<div class="pgrid" id="g-sl-${k}-nt"></div>
+<div class="blabel" style="margin-top:13px">Impact Close-Ups</div>
+<div class="pz" style="padding:12px"><input type="file" accept="image/*" multiple onchange="addPhotos('g-sl-${k}-ip',this.files)"><div class="pz-txt" style="font-size:12px">Chalk-circled impact photos</div></div>
+<div class="pgrid" id="g-sl-${k}-ip"></div>
+<div class="field" style="margin-top:10px"><label>Slope Notes</label><textarea placeholder="${EL[k]} slope notes..." oninput="S.slopes['${k}'].notes=this.value;autoSave()" style="min-height:50px">${esc(S.slopes[k].notes)}</textarea></div>`).join('')}`;
+}
+
+function rReviewStorm(){const j=S.job;const tp=countPhotos();return`<div class="stitle">Review & Generate</div>
+<div class="ssub">Confirm the summary then generate the storm inspection photo report.</div>
+<div class="rcard"><div class="rch">Property & Storm <span style="font-size:11px;opacity:.8">${tp} photos</span></div><div class="rcb">
+${[['Owner',j.owner||'—'],['Address',(j.address||'—')+(j.city?', '+j.city:'')],['Storm Date',j.stormDate||'—'],['Hail Size',j.hailSize?j.hailSize+'"':'—'],['Inspection Date',j.inspDate||'—'],['Rep',j.repName||'—']].map(([l,v])=>`<div class="rrow"><span class="rl2">${l}</span><span class="rv2">${v}</span></div>`).join('')}
+</div></div>
+<div class="rcard"><div class="rch">Test Square Results</div><div class="rcb">
+${SLOPES.map(s=>{const c=S.slopes[s].cnt;const p=c>=8;return`<div class="rrow"><span class="rl2">${EL[s]}</span><span class="rv2"><span class="sib ${p?'sipass':'siwarn'}">${c} impacts ${p?'✓':'⚠'}</span></span></div>`;}).join('')}
+</div></div>
+<div class="dv"></div>
+<div class="wcard">Open in Chrome → File → Print → Save as PDF</div>
+<button class="btn btng" style="width:100%;padding:14px;font-size:15px;margin-bottom:8px" onclick="genReport()">Generate Report (No Captions) →</button>
+<button class="btn btnp" style="width:100%;padding:14px;font-size:15px;margin-bottom:8px;background:#1565C0" onclick="exportForAI()">Export for AI Captioning →</button>
+<div id="ai-prompt-box" style="display:none;margin-bottom:8px"></div>
+<div id="caption-import-block" style="margin-bottom:8px">
+  <div style="font-size:12px;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Step 2 — Import Captions</div>
+  <textarea id="caption-paste" placeholder="Paste Claude's numbered caption list here:&#10;1. Front elevation showing ranch-style home with green siding...&#10;2. Downspout with chalk-marked hail impact dent...&#10;3. ..." style="width:100%;min-height:100px;border:1.5px solid var(--bdr);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--tx);background:var(--wh);resize:vertical;font-family:inherit;line-height:1.5"></textarea>
+  <button onclick="importCaptions()" style="width:100%;padding:10px;background:var(--g);color:#fff;border:none;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:6px">Match Captions to Photos →</button>
+  <div id="caption-match-result" style="margin-top:6px;font-size:12px;min-height:18px"></div>
+</div>
+<button class="btn btns" style="width:100%" onclick="showHome()">← Back to Home</button>
+<div id="gen-msg" style="margin-top:10px"></div>`;}
+
+// ── RETAIL STEPS ───────────────────────────────────────────────────────────────
+function bindR(field){return `value="${esc(S.job[field])}" oninput="S.job.${field}=this.value;autoSave()"`;}
+
+function rJobRetail(){return`<div class="stitle">Job Setup</div>
+<div class="ssub">Retail inspection — document property condition, wear, and repair needs.</div>
+<div class="gcard">This inspection produces a findings report and scope summary for the homeowner.</div>
+<div class="field"><label>Property Owner *</label><input ${bindR('owner')} placeholder="First and Last Name"></div>
+<div class="field"><label>Property Address *</label><input ${bindR('address')} placeholder="Street address"></div>
+<div class="frow">
+  <div class="field"><label>City</label><input ${bindR('city')} placeholder="City"></div>
+  <div class="field"><label>ZIP</label><input ${bindR('zip')} placeholder="ZIP"></div>
+</div>
+<div class="dv"></div>
+<div class="field"><label>Inspection Date *</label><input type="date" ${bindR('inspDate')}></div>
+<div class="dv"></div>
+<div class="frow">
+  <div class="field"><label>Rep Name *</label><input ${bindR('repName')} placeholder="Your name"></div>
+  <div class="field"><label>Rep Phone</label><input type="tel" ${bindR('repPhone')} placeholder="Cell"></div>
+</div>
+<div class="field"><label>Initial Observations</label><textarea placeholder="General property notes, approximate age, visible concerns..." oninput="S.job.notes=this.value;autoSave()">${esc(S.job.notes)}</textarea></div>`;}
+
+function rElevRetail(e){const el=S.elev[e];if(!el.findings)el.findings=[];return`<div class="stitle">${EL[e]} Elevation</div>
+<div class="ssub">${ED[e]} — Add an overview photo, then document each finding on this elevation.</div>
+<div class="blabel">Overview Photos</div>
+<div class="pz"><input type="file" accept="image/*" multiple onchange="addPhotos('g-e-${e}-ov',this.files)"><div class="pz-txt">Tap to add overview photos</div><div class="pz-hint">Wide shots of full elevation</div></div>
+<div class="pgrid" id="g-e-${e}-ov"></div>
+<div class="dv"></div>
+<div class="blabel">Close-Up Photos</div>
+<div class="pz"><input type="file" accept="image/*" multiple onchange="addPhotos('g-e-${e}-cu',this.files)"><div class="pz-txt">Elevation close-up photos</div><div class="pz-hint">Wear areas, condition details, measurements</div></div>
+<div class="pgrid" id="g-e-${e}-cu"></div>
+<div class="dv"></div>
+<div class="blabel">Findings — ${EL[e]} Elevation</div>
+<div class="icard" style="margin-bottom:10px">Add one finding per surface or issue. Pick an action, describe what you see, and add crew notes (e.g. "Protect rose bushes at NE corner", "Add ice &amp; water at valley").</div>
+${el.findings.map((f,i)=>findingCard(e,f,i)).join('')}
+<button class="add-finding-btn" onclick="addFinding('${e}')">+ Add Finding for ${EL[e]} Elevation</button>
+<div class="field" style="margin-top:12px"><label>Elevation Notes</label><textarea placeholder="Overall notes for this elevation..." oninput="S.elev['${e}'].notes=this.value;autoSave()">${esc(el.notes)}</textarea></div>`;}
+
+function rRoofRetail(){const r=S.roof;if(!r.findings)r.findings=[];return`<div class="stitle">Roof Overview & Findings</div>
+<div class="ssub">Pitch, gutters, component counts, and roof-specific findings.</div>
+<div class="field"><label>Roof Pitch</label><input value="${esc(r.pitch)}" placeholder='e.g. 6/12' oninput="S.roof.pitch=this.value;autoSave()"></div>
+<div class="dv"></div>
+<div class="blabel">Gutters</div>
+<div class="frow">
+  <div class="field"><label>Gutter Size</label>
+    <select onchange="S.roof.gsize=this.value;autoSave()"><option value="">Select...</option><option ${r.gsize==='5'?'selected':''} value="5">5" Aluminum</option><option ${r.gsize==='6'?'selected':''} value="6">6" Aluminum</option><option ${r.gsize==='other'?'selected':''} value="other">Other</option><option ${r.gsize==='none'?'selected':''} value="none">No gutters</option></select>
+  </div>
+  <div class="field"><label>Lineal Feet</label><input type="number" value="${esc(r.glf)}" placeholder="Total LF" oninput="S.roof.glf=this.value;autoSave()"></div>
+</div>
+<div class="dv"></div>
+<div class="blabel">Roof Overview Photos</div>
+<div class="pz"><input type="file" accept="image/*" multiple onchange="addPhotos('g-roof-ov',this.files)"><div class="pz-txt">Full slope views, valleys, ridge</div></div>
+<div class="pgrid" id="g-roof-ov"></div>
+<div class="dv"></div>
+<div class="blabel">Accessory & Penetration Photos</div>
+<div class="pz"><input type="file" accept="image/*" multiple onchange="addPhotos('g-roof-acc',this.files)"><div class="pz-txt">Vents, boots, gutters, flashing</div></div>
+<div class="pgrid" id="g-roof-acc"></div>
+<div class="dv"></div>
+<div class="blabel">Component Counts</div>
+<table class="comp-table">${COMPS.map(c=>`<tr><td>${c.l}</td><td><input type="number" min="0" placeholder="—" value="${esc(r.comps[c.id])}" oninput="S.roof.comps['${c.id}']=this.value;autoSave()"></td></tr>`).join('')}</table>
+<div class="dv"></div>
+<div class="blabel">Roof Findings</div>
+${r.findings.map((f,i)=>findingCard('roof',f,i)).join('')}
+<button class="add-finding-btn" onclick="addFinding('roof')">+ Add Roof Finding</button>
+<div class="field" style="margin-top:12px"><label>Roof Notes</label><textarea placeholder="Overall roof condition notes..." oninput="S.roof.notes=this.value;autoSave()">${esc(r.notes)}</textarea></div>`;}
+
+function rReviewRetail(){
+  const j=S.job;const tp=countPhotos();
+  const all=[];
+  ELEVS.forEach(e=>(S.elev[e].findings||[]).forEach(f=>all.push({...f,loc:`${EL[e]} Elevation`})));
+  (S.roof.findings||[]).forEach(f=>all.push({...f,loc:'Roof'}));
+  const rep=all.filter(f=>f.action==='Replace').length;
+  const repair=all.filter(f=>f.action==='Repair').length;
+  const mon=all.filter(f=>f.action==='Monitor').length;
+  return`<div class="stitle">Review & Generate</div>
+<div class="ssub">Confirm the summary then generate the retail inspection report.</div>
+<div class="rcard"><div class="rch">Property <span style="font-size:11px;opacity:.8">${tp} photos · ${all.length} findings</span></div><div class="rcb">
+${[['Owner',j.owner||'—'],['Address',(j.address||'—')+(j.city?', '+j.city:'')],['Inspection Date',j.inspDate||'—'],['Rep',j.repName||'—']].map(([l,v])=>`<div class="rrow"><span class="rl2">${l}</span><span class="rv2">${v}</span></div>`).join('')}
+</div></div>
+<div class="rcard"><div class="rch">Findings Summary</div><div class="rcb">
+<div class="rrow"><span class="rl2">Total Findings</span><span class="rv2">${all.length}</span></div>
+<div class="rrow"><span class="rl2">Replace</span><span class="rv2" style="color:var(--rd)">${rep}</span></div>
+<div class="rrow"><span class="rl2">Repair</span><span class="rv2" style="color:var(--ab)">${repair}</span></div>
+<div class="rrow"><span class="rl2">Monitor</span><span class="rv2">${mon}</span></div>
+</div></div>
+<div class="rcard"><div class="rch">By Location</div><div class="rcb">
+${ELEVS.map(e=>{const n=(S.elev[e].findings||[]).length;return`<div class="rrow"><span class="rl2">${EL[e]} Elevation</span><span class="rv2">${n} finding${n!==1?'s':''}</span></div>`;}).join('')}
+${(S.roof.findings||[]).length?`<div class="rrow"><span class="rl2">Roof</span><span class="rv2">${S.roof.findings.length} finding${S.roof.findings.length!==1?'s':''}</span></div>`:''}
+</div></div>
+<div class="dv"></div>
+<div class="wcard">Open in Chrome → File → Print → Save as PDF</div>
+<button class="btn btng" style="width:100%;padding:14px;font-size:15px;margin-bottom:8px" onclick="genReport()">Generate Report (No Captions) →</button>
+<button class="btn btnp" style="width:100%;padding:14px;font-size:15px;margin-bottom:8px;background:#5D4037" onclick="exportForAI()">Export for AI Captioning →</button>
+<div id="ai-prompt-box" style="display:none;margin-bottom:8px"></div>
+<div id="caption-import-block" style="margin-bottom:8px">
+  <div style="font-size:12px;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Step 2 — Import Captions</div>
+  <textarea id="caption-paste" placeholder="Paste Claude's numbered caption list here:&#10;1. Front elevation showing ranch-style home with green siding...&#10;2. Downspout with chalk-marked hail impact dent...&#10;3. ..." style="width:100%;min-height:100px;border:1.5px solid var(--bdr);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--tx);background:var(--wh);resize:vertical;font-family:inherit;line-height:1.5"></textarea>
+  <button onclick="importCaptions()" style="width:100%;padding:10px;background:var(--g);color:#fff;border:none;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:6px">Match Captions to Photos →</button>
+  <div id="caption-match-result" style="margin-top:6px;font-size:12px;min-height:18px"></div>
+</div>
+<button class="btn btns" style="width:100%" onclick="showHome()">← Back to Home</button>
+<div id="gen-msg" style="margin-top:10px"></div>`;}
+
+// ── REPORT GENERATION ──────────────────────────────────────────────────────────
+function genReport(){S.type==='storm'?genStorm():genRetail();}
+
+// ── CAPTION IMPORT ─────────────────────────────────────────────────────────────
+// Shared photo index built same order as export — used for matching
+function buildPhotoIndex(){
+  const index=[];
+  function add(arr,section,target,field){
+    (arr||[]).forEach((_,i)=>index.push({section,target,field,idx:i}));
+  }
+  if(S.type==='storm'){
+    ELEVS.forEach(e=>{add(S.elev[e].ov,`${EL[e]} Elevation — Overview`,'elev_'+e,'ov');add(S.elev[e].cu,`${EL[e]} Elevation — Close-Up`,'elev_'+e,'cu');});
+    add(S.roof.ovPhotos,'Roof — Overview','roof','ovPhotos');
+    add(S.roof.accPhotos,'Roof — Accessories','roof','accPhotos');
+    SLOPES.forEach(k=>{add(S.slopes[k].ov,`${EL[k]} Slope — Overview`,'slope_'+k,'ov');add(S.slopes[k].nt,`${EL[k]} Slope — Notation`,'slope_'+k,'nt');add(S.slopes[k].ip,`${EL[k]} Slope — Impacts`,'slope_'+k,'ip');});
+  } else {
+    ELEVS.forEach(e=>{
+      add(S.elev[e].ov,`${EL[e]} Elevation — Overview`,'elev_'+e,'ov');
+      add(S.elev[e].cu,`${EL[e]} Elevation — Close-Up`,'elev_'+e,'cu');
+      (S.elev[e].findings||[]).forEach((f,fi)=>add(f.photos,`${EL[e]} Finding ${fi+1}`,'finding_'+e+'_'+fi,'photos'));
+    });
+    add(S.roof.ovPhotos,'Roof — Overview','roof','ovPhotos');
+    add(S.roof.accPhotos,'Roof — Accessories','roof','accPhotos');
+    (S.roof.findings||[]).forEach((f,fi)=>add(f.photos,`Roof Finding ${fi+1}`,'finding_roof_'+fi,'photos'));
+  }
+  return index;
+}
+
+function getPhotoArr(target,field){
+  if(target.startsWith('elev_')){const e=target.replace('elev_','');return S.elev[e][field];}
+  if(target.startsWith('slope_')){const k=target.replace('slope_','');return S.slopes[k][field];}
+  if(target==='roof')return S.roof[field];
+  if(target.startsWith('finding_')){
+    const parts=target.split('_');
+    if(parts[1]==='roof')return S.roof.findings[+parts[2]].photos;
+    return S.elev[parts[1]].findings[+parts[2]].photos;
+  }
+  return null;
+}
+
+function importCaptions(){
+  const raw=document.getElementById('caption-paste')?.value?.trim();
+  if(!raw){alert('Paste Claude\'s numbered caption list first.');return;}
+
+  // Parse "1. Caption text" or "1: Caption text" format
+  const lines=raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  const parsed={};
+  lines.forEach(line=>{
+    const m=line.match(/^(\d+)[.:\)]\s*(.+)/);
+    if(m)parsed[parseInt(m[1])]=m[2].trim();
+  });
+
+  const index=buildPhotoIndex();
+  let matched=0;
+  index.forEach((item,i)=>{
+    const cap=parsed[i+1];
+    if(!cap)return;
+    const arr=getPhotoArr(item.target,item.field);
+    if(arr&&arr[item.idx]){arr[item.idx].caption=cap;matched++;}
+  });
+
+  autoSave();
+  const result=document.getElementById('caption-match-result');
+  if(result){
+    if(matched>0){
+      result.style.color='#2D5016';result.style.fontWeight='600';
+      result.textContent=`✓ ${matched} caption${matched!==1?'s':''} matched to photos — generate your report now.`;
+    } else {
+      result.style.color='var(--rd)';result.style.fontWeight='600';
+      result.textContent='No captions matched. Make sure you paste Claude\'s numbered list (1. Caption... 2. Caption...)';
+    }
+  }
+}
+
+// ── EXPORT FOR AI CAPTIONING ───────────────────────────────────────────────────
+function exportForAI(){
+  const j=S.job;
+  const photos=[];
+
+  function collect(arr,section){
+    (arr||[]).forEach((p,i)=>{photos.push({url:p.url,section,num:photos.length+1});});
+  }
+
+  if(S.type==='storm'){
+    ELEVS.forEach(e=>{
+      collect(S.elev[e].ov,`${EL[e]} Elevation — Overview`);
+      collect(S.elev[e].cu,`${EL[e]} Elevation — Close-Up`);
+    });
+    collect(S.roof.ovPhotos,'Roof — Overview');
+    collect(S.roof.accPhotos,'Roof — Accessories & Penetrations');
+    SLOPES.forEach(k=>{
+      collect(S.slopes[k].ov,`${EL[k]} Slope — Overview`);
+      collect(S.slopes[k].nt,`${EL[k]} Slope — Chalk Notation`);
+      collect(S.slopes[k].ip,`${EL[k]} Slope — Impact Close-Ups`);
+    });
+  } else {
+    ELEVS.forEach(e=>{
+      collect(S.elev[e].ov,`${EL[e]} Elevation — Overview`);
+      collect(S.elev[e].cu,`${EL[e]} Elevation — Close-Up`);
+      (S.elev[e].findings||[]).forEach((f,fi)=>{
+        collect(f.photos,`${EL[e]} Elevation — Finding ${fi+1}: ${f.area||'[area]'}`);
+      });
+    });
+    collect(S.roof.ovPhotos,'Roof — Overview');
+    collect(S.roof.accPhotos,'Roof — Accessories & Penetrations');
+    (S.roof.findings||[]).forEach((f,fi)=>{
+      collect(f.photos,`Roof — Finding ${fi+1}: ${f.area||'[area]'}`);
+    });
+  }
+
+  if(!photos.length){alert('No photos to export. Add photos to the inspection first.');return;}
+
+  const addr=j.address||'[Address]';
+  const repName=j.repName||'Walter Roofing Rep';
+  const inspType=S.type==='storm'?'Storm':'Retail';
+  const date=S.type==='storm'?(j.inspDate||j.stormDate||''):(j.inspDate||'');
+
+  // Build the lightweight export HTML — photos only, labeled by section
+  const rows=photos.map(p=>`
+    <div style="border:1px solid #ddd;border-radius:6px;overflow:hidden;margin-bottom:16px;page-break-inside:avoid">
+      <div style="background:#2D5016;color:#fff;padding:6px 12px;font-size:11px;font-weight:700;display:flex;justify-content:space-between">
+        <span>Photo ${p.num}</span>
+        <span style="opacity:.85;font-weight:400">${p.section}</span>
+      </div>
+      <img src="${p.url}" style="width:100%;display:block;max-height:320px;object-fit:cover">
+      <div style="padding:8px 12px;background:#f5f5f5;font-size:12px;color:#555;font-style:italic;min-height:32px">Caption: [AI to complete]</div>
+    </div>`).join('');
+
+  const exportHtml=`<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>WR Caption Export — ${addr}</title>
+<style>body{font-family:Arial,sans-serif;font-size:13px;color:#333;background:#eee}.page{max-width:700px;margin:16px auto;background:#fff;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.15)}@media print{body{background:#fff}.page{box-shadow:none;margin:0}}</style>
+</head><body><div class="page">
+<div style="background:#2D5016;color:#fff;padding:14px 20px;margin-bottom:20px;border-radius:6px">
+  <div style="font-size:18px;font-weight:700">WALTER ROOFING — ${inspType} Inspection</div>
+  <div style="font-size:12px;opacity:.85;margin-top:3px">${addr} &nbsp;·&nbsp; ${repName} &nbsp;·&nbsp; ${date} &nbsp;·&nbsp; ${photos.length} photos</div>
+</div>
+<div style="background:#EBF3FB;border:1px solid #b3d4f0;border-radius:6px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:#1a4a7a;line-height:1.6">
+  <strong>Instructions for AI:</strong> This is a Walter Roofing ${inspType.toLowerCase()} inspection photo export. Each photo is labeled with its section. Please write a factual 1–2 sentence caption for each photo describing exactly what is visible. Use neutral, objective language. Do not use the word "damage." Focus on what surfaces, conditions, or measurements are shown. Return a numbered list matching the photo numbers.
+</div>
+${rows}
+</div></body></html>`;
+
+  // Download the export file
+  const blob=new Blob([exportHtml],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;
+  a.download=`WR_CaptionExport_${(addr).replace(/[^a-zA-Z0-9]/g,'_').substring(0,20)}_${date||'draft'}.html`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+
+  // Show the copy prompt in the review screen
+  const box=document.getElementById('ai-prompt-box');
+  if(box){
+    const prompt=`I'm uploading a Walter Roofing ${inspType.toLowerCase()} inspection photo export. Each photo is labeled with its section (elevation, roof, slope, etc). Please write a factual 1–2 sentence caption for each photo describing exactly what is visible. Rules: neutral objective language, do not use the word "damage", describe surfaces and conditions only, max 20 words per caption. Return a numbered list: "1. [caption]" matching the photo numbers in the file.`;
+    box.style.display='block';
+    box.innerHTML=`<div style="background:#EAF2E3;border:1.5px solid #2D5016;border-radius:8px;padding:12px 14px">
+      <div style="font-size:12px;font-weight:700;color:#2D5016;margin-bottom:6px">✓ Export downloaded (${photos.length} photos)</div>
+      <div style="font-size:11px;color:#444;margin-bottom:8px;line-height:1.5">Upload the file to Claude.ai, then copy and paste this prompt:</div>
+      <div style="background:#fff;border:1px solid #C5DFB0;border-radius:6px;padding:8px 10px;font-size:11px;color:#333;line-height:1.5;margin-bottom:8px;font-family:monospace">${prompt}</div>
+      <button onclick="navigator.clipboard.writeText('${prompt.replace(/'/g,"\\'")}').then(()=>{this.textContent='✓ Copied!';setTimeout(()=>this.textContent='Copy Prompt',2000)})" style="background:#2D5016;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;width:100%;font-family:inherit">Copy Prompt</button>
+    </div>`;
+  }
+}
+
+function rptBase(){
+  const G='#2D5016',LG='#EAF2E3',MG='#C5DFB0';
+  const css=`*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;font-size:13px;color:#404040;background:#ddd}.page{width:900px;margin:20px auto;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.15)}table{width:100%;border-collapse:collapse}th{background:${G};color:#fff;padding:8px 14px;text-align:left;font-size:11px}td{padding:8px 14px;border:1px solid #ddd;font-size:12px}tr:nth-child(even) td{background:#fafafa}.sum{background:${LG};border:2px solid ${G};margin:16px 36px;padding:14px 18px;border-radius:6px}.sum h3{font-size:13px;color:${G};font-weight:700;margin-bottom:8px}.sum li{font-size:12px;padding:3px 0 3px 18px;position:relative;list-style:none}.sum li::before{content:"✓";position:absolute;left:0;color:${G};font-weight:700}.ftr{border-top:2px solid #ddd;padding:10px 36px;margin-top:20px;display:flex;justify-content:space-between;font-size:10px;color:#888}@media print{body{background:#fff}.page{box-shadow:none;margin:0;width:100%}}`;
+  return{G,LG,MG,css};
+}
+
+function pgRpt(arr,cols=2,G,MG){
+  if(!arr||!arr.length)return'<p style="font-size:11px;color:#888;font-style:italic;padding:6px 0">No photos for this section.</p>';
+  return`<div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:8px;margin:8px 0">`+
+    arr.map((p,i)=>`<div style="border:1px solid #ddd;border-radius:4px;overflow:hidden">
+      <img src="${p.url}" style="width:100%;display:block;max-height:200px;object-fit:cover">
+      <div style="font-size:11px;padding:4px 7px;background:#f9f9f9;border-top:1px solid #ddd;color:${p.caption?'#333':'#aaa'};font-style:${p.caption?'normal':'italic'}">${p.caption||'Caption pending AI review'}</div>
+    </div>`).join('')+'</div>';
+}
+
+function rptHeader(j,G,LG,MG,subtitle,extra=[]){
+  return`<div style="background:#fff;border-bottom:5px solid ${G};padding:14px 36px 12px;display:flex;justify-content:space-between;align-items:flex-end">
+  <div><div style="font-size:22px;font-weight:700;color:${G};letter-spacing:1px">WALTER ROOFING</div><div style="font-size:11px;color:#777;font-style:italic;margin-top:1px">${subtitle}</div></div>
+  <div style="text-align:right;font-size:11px;color:#777;line-height:1.8">walterroofing.com | ${j.repPhone||''}<br>Clive, IA | Iowa &amp; Omaha Metro</div>
+</div>
+<div style="background:${LG};border-left:5px solid ${G};margin:14px 36px 0;padding:12px 18px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px 18px">
+  ${[['Property Owner',j.owner||'—'],['Property Address',(j.address||'')+(j.city?', '+j.city:'')+(j.zip?' '+j.zip:'')],['Inspection Date',j.inspDate||'—'],['Inspecting Contractor',(j.repName||'—')+' — Walter Roofing'],...extra].map(([l,v])=>`<div><span style="font-weight:700;color:${G};font-size:10px;text-transform:uppercase;letter-spacing:.5px;display:block">${l}</span><span style="font-size:12px">${v}</span></div>`).join('')}
+</div>`;
+}
+
+function phdr(num,title,sub,G,MG){
+  return`<div style="background:${G};padding:14px 36px 11px;margin-top:24px">
+    <div style="font-size:10px;font-weight:700;color:${MG};letter-spacing:2px;text-transform:uppercase;margin-bottom:3px">PART ${num}</div>
+    <div style="font-size:18px;font-weight:700;color:#fff">${title}</div>
+    <div style="font-size:11px;color:${MG};font-style:italic;margin-top:3px">${sub}</div>
+  </div>`;
+}
+function shdr(lbl,sub,G){
+  return`<div style="background:#3a6b1e;color:#fff;padding:9px 36px;display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px;font-weight:700">${lbl}</span>${sub?`<span style="font-size:11px;opacity:.75;font-style:italic">${sub}</span>`:''}</div>`;
+}
+
+function dnld(html,fname){
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=fname;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  const msg=document.getElementById('gen-msg');
+  if(msg){msg.style.cssText='background:#EAF2E3;border:1.5px solid #2D5016;border-radius:8px;padding:12px;text-align:center;font-size:12px;color:#2D5016;font-weight:600';
+    msg.textContent='✓ Report downloaded — upload to Claude.ai for photo captions, then print to PDF';}
+}
+
+function genStorm(){
+  const j=S.job;const{G,LG,MG,css}=rptBase();const tp=countPhotos();
+
+  const elevSecs=ELEVS.map(e=>{
+    const el=S.elev[e];
+    const surfs=el.surfaces.map(id=>SURFS.find(s=>s.id===id)?.l||id);
+    return`${shdr(`${EL[e]} Elevation`,ED[e],G)}
+<div style="padding:12px 36px">
+  <div style="font-size:11px;font-weight:700;color:${G};text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Overview Photos</div>
+  ${pgRpt(el.ov,2,G,MG)}
+  ${surfs.length?`<div style="margin:10px 0 6px"><span style="font-size:11px;font-weight:700;color:${G};text-transform:uppercase;letter-spacing:.4px">Surfaces Documented: </span>${surfs.map(s=>`<span style="display:inline-block;background:${LG};color:${G};border:1px solid ${MG};border-radius:3px;padding:2px 7px;font-size:11px;font-weight:600;margin:2px">${s}</span>`).join('')}</div>`:''}
+  ${el.notes?`<div style="font-size:12px;color:#555;font-style:italic;padding:7px 10px;background:#f9f9f9;border-left:3px solid ${MG};margin:8px 0">${el.notes}</div>`:''}
+  <div style="font-size:11px;font-weight:700;color:${G};text-transform:uppercase;letter-spacing:.4px;margin:10px 0 6px">Close-Up Condition Photos</div>
+  ${pgRpt(el.cu,2,G,MG)}
+</div>`;
+  }).join('');
+
+  const slopeSecs=SLOPES.map(s=>{
+    const sl=S.slopes[s];const pass=sl.cnt>=8;
+    const all=[...sl.ov,...sl.nt,...sl.ip];
+    return`<div style="background:#3a6b1e;color:#fff;padding:9px 36px;display:flex;justify-content:space-between;align-items:center">
+      <span style="font-size:13px;font-weight:700">${EL[s]} Slope</span>
+      <span style="background:${pass?LG:'#FFF3CD'};color:${pass?G:'#856404'};border:1px solid ${pass?MG:'#d4a017'};border-radius:3px;padding:2px 8px;font-size:11px;font-weight:700">${sl.cnt} impacts${pass?' — confirmed':''}</span>
+    </div>
+<div style="padding:12px 36px">
+  ${pgRpt(all,all.length===1?1:2,G,MG)}
+  ${sl.notes?`<div style="font-size:12px;color:#555;font-style:italic;padding:7px 10px;background:#f9f9f9;border-left:3px solid ${MG};margin-top:8px">${sl.notes}</div>`:''}
+</div>`;
+  }).join('');
+
+  const compRows=COMPS.filter(c=>S.roof.comps[c.id]).map(c=>`<tr><td>${c.l}</td><td style="text-align:center;font-weight:700">${S.roof.comps[c.id]}</td></tr>`).join('');
+  const impactRows=SLOPES.map(s=>{const c=S.slopes[s].cnt;const pass=c>=8;return`<tr><td><strong>${EL[s]}</strong></td><td style="text-align:center;font-weight:700">${c}</td><td style="text-align:center">8 min.</td><td style="text-align:center"><span style="background:${pass?LG:'#FFF3CD'};color:${pass?G:'#856404'};border:1px solid ${pass?MG:'#d4a017'};border-radius:3px;padding:2px 8px;font-size:11px;font-weight:700">${pass?'CONFIRMED':'BELOW THRESHOLD'}</span></td></tr>`;}).join('');
+
+  const sumItems=[
+    `${tp} total photos collected on ${j.inspDate||'[date]'} — upload to Claude.ai to add AI captions`,
+    ...SLOPES.filter(s=>S.slopes[s].cnt>=8).map(s=>`${EL[s]} slope: ${S.slopes[s].cnt} impacts — functional hail exposure confirmed`),
+    ...ELEVS.filter(e=>S.elev[e].surfaces.length).map(e=>`${EL[e]} elevation: ${S.elev[e].surfaces.map(id=>SURFS.find(s=>s.id===id)?.l||id).join(', ')}`),
+    S.roof.pitch?`Roof pitch: ${S.roof.pitch}`:'',
+    ...COMPS.filter(c=>S.roof.comps[c.id]).map(c=>`${c.l}: ${S.roof.comps[c.id]}`),
+    'Full photo archive available for adjuster or carrier review upon request',
+    'This report is a contractor inspection document. Walter Roofing does not represent the homeowner in insurance claim proceedings.',
+  ].filter(Boolean);
+
+  const html=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Walter Roofing — Storm Inspection — ${j.owner||''}</title><style>${css}</style></head><body><div class="page">
+${rptHeader(j,G,LG,MG,'Storm Inspection Photo Report',[['Storm Event Date',j.stormDate||'—'],['Hail Recon Size',j.hailSize?j.hailSize+'"':'—'],['Total Photos',String(tp)],['Claim #','Provided by homeowner']])}
+<div style="text-align:center;padding:16px 36px 12px;border-bottom:2px solid ${MG};margin-top:14px">
+  <div style="font-size:22px;font-weight:700;color:${G}">STORM INSPECTION PHOTO REPORT</div>
+  <div style="font-size:11px;color:#888;font-style:italic;margin-top:4px">Property Condition Documentation | Exhibit B — Walter Roofing Evidence Package</div>
+</div>
+${phdr('1','ELEVATIONS','Ground-level overviews and close-up condition photos — Front · Right · Rear · Left',G,MG)}
+${elevSecs}
+${phdr('2','ROOF OVERVIEW & ACCESSORIES','Pitch · Gutters · Component inventory · Penetrations',G,MG)}
+${shdr('Roof System Overview','',G)}
+<div style="padding:12px 36px">
+  <div style="font-size:12px;margin-bottom:10px"><strong>Pitch:</strong> ${S.roof.pitch||'—'} &nbsp;&nbsp;<strong>Gutter Size:</strong> ${S.roof.gsize||'—'} &nbsp;&nbsp;<strong>Lineal Feet:</strong> ${S.roof.glf||'—'}
+    ${S.roof.gdmg?` &nbsp;<span style="background:${LG};color:${G};border:1px solid ${MG};border-radius:3px;padding:1px 7px;font-size:11px;font-weight:700">Gutters documented</span>`:''}
+    ${S.roof.ggdmg?` &nbsp;<span style="background:${LG};color:${G};border:1px solid ${MG};border-radius:3px;padding:1px 7px;font-size:11px;font-weight:700">Guards documented</span>`:''}
+    ${S.roof.dedmg?` &nbsp;<span style="background:${LG};color:${G};border:1px solid ${MG};border-radius:3px;padding:1px 7px;font-size:11px;font-weight:700">Drip edge documented</span>`:''}
+  </div>
+  ${pgRpt(S.roof.ovPhotos,2,G,MG)}
+</div>
+${shdr('Components & Penetrations','',G)}
+<div style="padding:12px 36px">
+  ${compRows?`<table style="margin-bottom:12px"><thead><tr><th>Component</th><th style="text-align:center;width:120px">Count</th></tr></thead><tbody>${compRows}</tbody></table>`:''}
+  ${pgRpt(S.roof.accPhotos,3,G,MG)}
+  ${S.roof.notes?`<div style="font-size:12px;color:#555;font-style:italic;padding:7px 10px;background:#f9f9f9;border-left:3px solid ${MG};margin-top:8px">${S.roof.notes}</div>`:''}
+</div>
+${phdr('3','ROOF SLOPES & TEST SQUARES','Impact counts · Field notations · Condition photos — Front · Right · Rear · Left',G,MG)}
+<div style="padding:14px 36px"><table><thead><tr><th>Slope</th><th>Impacts</th><th>Threshold</th><th>Assessment</th></tr></thead><tbody>${impactRows}</tbody></table></div>
+${slopeSecs}
+<div class="sum"><h3>Summary — ${j.address||'[Address]'}</h3><ul>${sumItems.map(l=>`<li>${l}</li>`).join('')}</ul></div>
+<div class="ftr"><span>Walter Roofing | Clive, IA | walterroofing.com</span><span>Rep: ${j.repName||''} | ${j.inspDate||''}</span><span>Storm Inspection Photo Report</span></div>
+</div></body></html>`;
+  dnld(html,`WR_Storm_${(j.address||'report').replace(/[^a-zA-Z0-9]/g,'_').substring(0,22)}_${j.inspDate||'draft'}.html`);
+}
+
+function genRetail(){
+  const j=S.job;const{G,LG,MG,css}=rptBase();const tp=countPhotos();
+  const RET='#5D4037';const RETL='#EFEBE9';
+  const allFindings=[];
+  ELEVS.forEach(e=>(S.elev[e].findings||[]).forEach(f=>allFindings.push({...f,loc:`${EL[e]} Elevation`})));
+  (S.roof.findings||[]).forEach(f=>allFindings.push({...f,loc:'Roof'}));
+
+  function actBadge(a){
+    const map={Repair:`background:#FFF3CD;color:#856404;border:1px solid #d4a017`,Replace:`background:#FDECEA;color:#C0392B;border:1px solid #EF9A9A`,Monitor:`background:#EBF3FB;color:#2E75B6;border:1px solid #90CAF9`};
+    return a?`<span style="${map[a]||''};border-radius:3px;padding:2px 8px;font-size:11px;font-weight:700;display:inline-block">${a}</span>`:'';
+  }
+
+  function findSec(f,i){
+    return`<div style="border:1px solid #ddd;border-radius:6px;padding:12px;margin-bottom:10px;background:#fff">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+        <div style="width:22px;height:22px;background:${G};color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${i+1}</div>
+        <div style="font-size:13px;font-weight:700;color:${G};flex:1">${f.area||'[Surface/Area]'}</div>
+        <div>${actBadge(f.action)}</div>
+      </div>
+      ${f.description?`<div style="font-size:12px;padding:8px 10px;background:#f9f9f9;border-radius:4px;border-left:3px solid ${MG};margin-bottom:8px"><strong>Observation:</strong> ${f.description}</div>`:''}
+      ${f.crewNote?`<div style="font-size:12px;padding:8px 10px;background:#FFF3CD;border-radius:4px;border-left:3px solid #d4a017;margin-bottom:8px"><strong>Crew Note:</strong> ${f.crewNote}</div>`:''}
+      ${f.material?`<div style="font-size:12px;padding:8px 10px;background:#EBF3FB;border-radius:4px;border-left:3px solid #90CAF9;margin-bottom:8px"><strong>Material / Product:</strong> ${f.material}</div>`:''}
+      ${f.photos&&f.photos.length?`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px">${f.photos.map((p,pi)=>`<div style="border:1px solid #ddd;border-radius:4px;overflow:hidden"><img src="${p.url}" style="width:100%;display:block;height:100px;object-fit:cover"><div style="font-size:10px;color:#888;padding:2px 4px;background:#f9f9f9;text-align:center">Photo ${pi+1}</div></div>`).join('')}</div>`:''}
+    </div>`;
+  }
+
+  const elevSecs=ELEVS.map(e=>{
+    const el=S.elev[e];const findings=el.findings||[];
+    return`${shdr(`${EL[e]} Elevation`,ED[e],G)}
+<div style="padding:12px 36px">
+  ${pgRpt(el.ov,2,G,MG)}
+  ${el.notes?`<div style="font-size:12px;color:#555;font-style:italic;padding:7px 10px;background:#f9f9f9;border-left:3px solid ${MG};margin:8px 0">${el.notes}</div>`:''}
+  ${pgRpt(el.cu,2,G,MG)}
+  ${findings.length?`<div style="font-size:11px;font-weight:700;color:${G};text-transform:uppercase;letter-spacing:.4px;margin:14px 0 8px">Findings — ${EL[e]} Elevation</div>${findings.map((f,i)=>findSec(f,i)).join('')}`:'<p style="font-size:12px;color:#888;font-style:italic;padding:6px 0">No findings recorded for this elevation.</p>'}
+</div>`;
+  }).join('');
+
+  const scopeRows=allFindings.filter(f=>f.action==='Replace'||f.action==='Repair').map(f=>`<tr><td>${f.loc}</td><td>${f.area||'—'}</td><td>${actBadge(f.action)}</td><td style="font-size:11px">${f.material||'—'}</td><td style="font-size:11px">${f.crewNote||'—'}</td></tr>`).join('');
+  const compRows=COMPS.filter(c=>S.roof.comps[c.id]).map(c=>`<tr><td>${c.l}</td><td style="text-align:center;font-weight:700">${S.roof.comps[c.id]}</td></tr>`).join('');
+
+  const sumItems=[
+    `${tp} total photos collected on ${j.inspDate||'[date]'} — upload to Claude.ai to add AI captions`,
+    `${allFindings.length} total findings documented`,
+    ...allFindings.filter(f=>f.action==='Replace').map(f=>`Replace: ${f.loc} — ${f.area||'[area]'}${f.material?' ('+f.material+')':''}`),
+    ...allFindings.filter(f=>f.crewNote).map(f=>`Crew note — ${f.loc}: ${f.crewNote}`),
+    'This report is a contractor inspection document prepared by Walter Roofing.',
+  ].filter(Boolean);
+
+  const html=`<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Walter Roofing — Retail Inspection — ${j.owner||''}</title>
+<style>${css}.ft{width:100%;border-collapse:collapse;margin:10px 0}.ft th{background:${RET};color:#fff;padding:7px 12px;text-align:left;font-size:11px}.ft td{padding:7px 12px;border:1px solid #ddd;font-size:12px;vertical-align:top}.ft tr:nth-child(even) td{background:${RETL}}</style>
+</head><body><div class="page">
+${rptHeader(j,G,LG,MG,'Retail Inspection Report',[['Total Photos',String(tp)],['Total Findings',String(allFindings.length)]])}
+<div style="text-align:center;padding:16px 36px 12px;border-bottom:2px solid ${MG};margin-top:14px">
+  <div style="font-size:22px;font-weight:700;color:${G}">RETAIL INSPECTION REPORT</div>
+  <div style="font-size:11px;color:#888;font-style:italic;margin-top:4px">Property Condition Assessment &amp; Scope Document | Walter Roofing</div>
+</div>
+${scopeRows?`${phdr('1','SCOPE SUMMARY','All findings requiring repair or replacement',G,MG)}
+<div style="padding:12px 36px">
+  <table class="ft"><thead><tr><th>Location</th><th>Area / Surface</th><th>Action</th><th>Material</th><th>Crew Notes</th></tr></thead>
+  <tbody>${scopeRows}</tbody></table>
+</div>`:''}
+${phdr(scopeRows?'2':'1','ELEVATIONS','Overview photos and detailed findings — Front · Right · Rear · Left',G,MG)}
+${elevSecs}
+${phdr(scopeRows?'3':'2','ROOF OVERVIEW & FINDINGS','Pitch · Components · Roof-specific findings',G,MG)}
+${shdr('Roof System Overview','',G)}
+<div style="padding:12px 36px">
+  <div style="font-size:12px;margin-bottom:10px"><strong>Pitch:</strong> ${S.roof.pitch||'—'} &nbsp;&nbsp;<strong>Gutter Size:</strong> ${S.roof.gsize||'—'} &nbsp;&nbsp;<strong>Lineal Feet:</strong> ${S.roof.glf||'—'}</div>
+  ${pgRpt(S.roof.ovPhotos,2,G,MG)}
+</div>
+${shdr('Roof Components','',G)}
+<div style="padding:12px 36px">
+  ${compRows?`<table style="margin-bottom:12px"><thead><tr><th>Component</th><th style="text-align:center;width:120px">Count</th></tr></thead><tbody>${compRows}</tbody></table>`:''}
+  ${pgRpt(S.roof.accPhotos,3,G,MG)}
+  ${(S.roof.findings||[]).length?`<div style="font-size:11px;font-weight:700;color:${G};text-transform:uppercase;letter-spacing:.4px;margin:14px 0 8px">Roof Findings</div>${S.roof.findings.map((f,i)=>findSec(f,i)).join('')}`:''}
+  ${S.roof.notes?`<div style="font-size:12px;color:#555;font-style:italic;padding:7px 10px;background:#f9f9f9;border-left:3px solid ${MG};margin-top:8px">${S.roof.notes}</div>`:''}
+</div>
+<div class="sum"><h3>Summary — ${j.address||'[Address]'}</h3><ul>${sumItems.map(l=>`<li>${l}</li>`).join('')}</ul></div>
+<div class="ftr"><span>Walter Roofing | Clive, IA | walterroofing.com</span><span>Rep: ${j.repName||''} | ${j.inspDate||''}</span><span>Retail Inspection Report</span></div>
+</div></body></html>`;
+  dnld(html,`WR_Retail_${(j.address||'report').replace(/[^a-zA-Z0-9]/g,'_').substring(0,22)}_${j.inspDate||'draft'}.html`);
+}
+
+// ── INIT ───────────────────────────────────────────────────────────────────────
+showHome();
+</script>
+</body>
+</html>
