@@ -715,6 +715,18 @@ ${(S.roof.findings||[]).length?`<div class="rrow"><span class="rl2">Roof</span><
   <button onclick="importCaptions()" style="width:100%;padding:10px;background:var(--g);color:#fff;border:none;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:6px">Match Captions to Photos →</button>
   <div id="caption-match-result" style="margin-top:6px;font-size:12px;min-height:18px"></div>
 </div>
+<div class="dv"></div>
+<div style="font-size:12px;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px">AI Findings Analysis (Retail)</div>
+<div class="gcard" style="margin-bottom:8px">Export close-up photos to Claude — AI reads each one and suggests the surface, action (Repair/Replace/Monitor), and description. Import the results to auto-create finding cards you can review and edit.</div>
+<button class="btn btnp" style="width:100%;padding:13px;font-size:14px;margin-bottom:8px;background:#2E75B6" onclick="exportForFindings()">Export Close-Ups for AI Findings →</button>
+<div id="findings-prompt-box" style="display:none;margin-bottom:8px"></div>
+<div id="findings-import-block" style="margin-bottom:8px">
+  <div style="font-size:12px;font-weight:700;color:var(--txm);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Import AI Findings</div>
+  <div class="icard" style="margin-bottom:8px;font-size:11px">Paste Claude's findings list below. Format: <strong>1. Surface | Action | Description</strong></div>
+  <textarea id="findings-paste" placeholder="Paste Claude's findings list here:&#10;1. Fascia | Replace | Painted wood fascia board showing peeling and exposed wood grain.&#10;2. Gutter | Repair | Aluminum gutter with separated seam at corner joint.&#10;3. Siding | Monitor | Vinyl siding with minor weathering consistent with age." style="width:100%;min-height:110px;border:1.5px solid var(--bdr);border-radius:var(--r);padding:10px 12px;font-size:12px;color:var(--tx);background:var(--wh);resize:vertical;font-family:inherit;line-height:1.5"></textarea>
+  <button onclick="importFindings()" style="width:100%;padding:10px;background:#2E75B6;color:#fff;border:none;border-radius:var(--r);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:6px">Create Finding Cards from AI →</button>
+  <div id="findings-import-result" style="margin-top:6px;font-size:12px;min-height:18px"></div>
+</div>
 <button class="btn btns" style="width:100%" onclick="showHome()">← Back to Home</button>
 <div id="gen-msg" style="margin-top:10px"></div>`;}
 
@@ -789,6 +801,149 @@ function importCaptions(){
       result.style.color='var(--rd)';result.style.fontWeight='600';
       result.textContent='No captions matched. Make sure you paste Claude\'s numbered list (1. Caption... 2. Caption...)';
     }
+  }
+}
+
+// ── EXPORT FOR AI FINDINGS (RETAIL) ──────────────────────────────────────────
+function exportForFindings(){
+  const j=S.job;
+  if(S.type!=='retail'){alert('AI findings analysis is for retail inspections only.');return;}
+
+  const photos=[];
+  // Collect close-up photos from each elevation, labeled with location
+  ELEVS.forEach(e=>{
+    (S.elev[e].cu||[]).forEach((p,i)=>{
+      photos.push({url:p.url,num:photos.length+1,section:`${EL[e]} Elevation close-up`,elev:e});
+    });
+  });
+  // Roof accessory photos
+  (S.roof.accPhotos||[]).forEach((p,i)=>{
+    photos.push({url:p.url,num:photos.length+1,section:'Roof — accessory/penetration close-up',elev:'roof'});
+  });
+
+  if(!photos.length){alert('No close-up photos found. Add close-up photos to your elevations first.');return;}
+
+  const addr=j.address||'[Address]';
+  const rows=photos.map(p=>`
+    <div style="border:1px solid #ddd;border-radius:6px;overflow:hidden;margin-bottom:14px;page-break-inside:avoid">
+      <div style="background:#1565C0;color:#fff;padding:6px 12px;font-size:11px;font-weight:700;display:flex;justify-content:space-between">
+        <span>Photo ${p.num}</span>
+        <span style="opacity:.85;font-weight:400">${p.section}</span>
+      </div>
+      <img src="${p.url}" style="width:100%;display:block;max-height:300px;object-fit:contain;background:#f5f5f5">
+      <div style="padding:7px 12px;background:#f9f9f9;font-size:12px;color:#555;font-style:italic">AI finding: [to complete]</div>
+    </div>`).join('');
+
+  const prompt=`I'm uploading a Walter Roofing retail inspection photo export. Each photo is a close-up of a surface or component that may need attention. For each photo, analyze what you see and return a finding in this EXACT format on a new line:
+
+[number]. [Surface/Component] | [Action] | [Description]
+
+Rules:
+- Surface: specific name like "Fascia", "Ridge cap", "Gutter", "Downspout", "Siding", "Window sill", "Soffit", "Pipe boot", "Shingle", "Flashing", "Caulk/Sealant"
+- Action: ONLY one of these three words: Replace, Repair, or Monitor
+- Description: 1-2 factual sentences, neutral language, no word "damage", max 25 words
+- Return ONLY the numbered list, nothing else
+
+Example output:
+1. Fascia | Replace | Painted wood fascia board showing peeling finish and exposed grain along the full run.
+2. Gutter | Repair | Aluminum gutter section with separated end cap allowing water intrusion at joint.
+3. Siding | Monitor | Vinyl siding panel with minor surface weathering consistent with normal aging.`;
+
+  const exportHtml=`<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<title>WR Findings Export — ${addr}</title>
+<style>body{font-family:Arial,sans-serif;font-size:13px;color:#333;background:#eee}.page{max-width:700px;margin:16px auto;background:#fff;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.15)}@media print{body{background:#fff}.page{box-shadow:none;margin:0}}</style>
+</head><body><div class="page">
+<div style="background:#1565C0;color:#fff;padding:14px 20px;margin-bottom:20px;border-radius:6px">
+  <div style="font-size:18px;font-weight:700">WALTER ROOFING — Retail Inspection Findings Export</div>
+  <div style="font-size:12px;opacity:.85;margin-top:3px">${addr} &nbsp;·&nbsp; ${j.repName||'Rep'} &nbsp;·&nbsp; ${j.inspDate||''} &nbsp;·&nbsp; ${photos.length} close-up photos</div>
+</div>
+<div style="background:#EBF3FB;border:1px solid #b3d4f0;border-radius:6px;padding:12px 16px;margin-bottom:20px;font-size:12px;color:#1a4a7a;line-height:1.6">
+  <strong>Instructions for AI:</strong> ${prompt}
+</div>
+${rows}
+</div></body></html>`;
+
+  const blob=new Blob([exportHtml],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;
+  a.download=`WR_FindingsExport_${(addr).replace(/[^a-zA-Z0-9]/g,'_').substring(0,20)}_${j.inspDate||'draft'}.html`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+
+  // Show prompt box with copy button
+  const box=document.getElementById('findings-prompt-box');
+  if(box){
+    box.style.display='block';
+    box.innerHTML=`<div style="background:#EBF3FB;border:1.5px solid #2E75B6;border-radius:8px;padding:12px 14px">
+      <div style="font-size:12px;font-weight:700;color:#1565C0;margin-bottom:6px">✓ Export downloaded (${photos.length} close-up photos)</div>
+      <div style="font-size:11px;color:#444;margin-bottom:8px;line-height:1.5">Upload the file to Claude.ai, then copy and paste this prompt:</div>
+      <div style="background:#fff;border:1px solid #b3d4f0;border-radius:6px;padding:8px 10px;font-size:11px;color:#333;line-height:1.5;margin-bottom:8px;max-height:120px;overflow-y:auto">${prompt.replace(/\n/g,'<br>')}</div>
+      <button onclick="navigator.clipboard.writeText(${JSON.stringify(prompt)}).then(()=>{this.textContent='✓ Copied!';setTimeout(()=>this.textContent='Copy Prompt',2000)})" style="background:#1565C0;color:#fff;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;width:100%;font-family:inherit">Copy Prompt</button>
+    </div>`;
+  }
+}
+
+// ── IMPORT AI FINDINGS ────────────────────────────────────────────────────────
+function importFindings(){
+  const raw=document.getElementById('findings-paste')?.value?.trim();
+  if(!raw){alert('Paste Claude\'s findings list first.');return;}
+
+  // Parse "1. Surface | Action | Description" format
+  const lines=raw.split('\n').map(l=>l.trim()).filter(Boolean);
+  const parsed=[];
+  lines.forEach(line=>{
+    const m=line.match(/^\d+[.:\)]\s*(.+)/);
+    if(!m)return;
+    const parts=m[1].split('|').map(s=>s.trim());
+    if(parts.length<2)return;
+    const area=parts[0]||'';
+    const actionRaw=(parts[1]||'').toLowerCase();
+    const action=actionRaw.includes('replace')?'Replace':actionRaw.includes('repair')?'Repair':'Monitor';
+    const description=parts[2]||'';
+    parsed.push({area,action,description});
+  });
+
+  if(!parsed.length){
+    const result=document.getElementById('findings-import-result');
+    if(result){result.style.color='var(--rd)';result.textContent='No findings parsed. Make sure format is: 1. Surface | Action | Description';}
+    return;
+  }
+
+  // Figure out which elevation's close-ups map to which photo numbers
+  // Build same index as export: elev close-ups in order, then roof acc photos
+  const photoIndex=[];
+  ELEVS.forEach(e=>(S.elev[e].cu||[]).forEach((p,i)=>photoIndex.push({elev:e,photoIdx:i,photo:p})));
+  (S.roof.accPhotos||[]).forEach((p,i)=>photoIndex.push({elev:'roof',photoIdx:i,photo:p}));
+
+  // Create finding cards — try to match to elevation by photo order, otherwise default to first elev that has cu photos
+  let created=0;
+  parsed.forEach((p,i)=>{
+    const photoEntry=photoIndex[i];
+    const target=photoEntry?photoEntry.elev:'front';
+    const f=freshFinding();
+    f.area=p.area;
+    f.action=p.action;
+    f.description=p.description;
+    // Attach the corresponding photo if available
+    if(photoEntry&&photoEntry.photo){
+      f.photos=[{...photoEntry.photo}];
+    }
+    if(target==='roof'){
+      if(!S.roof.findings)S.roof.findings=[];
+      S.roof.findings.push(f);
+    } else {
+      if(!S.elev[target].findings)S.elev[target].findings=[];
+      S.elev[target].findings.push(f);
+    }
+    created++;
+  });
+
+  autoSave();
+
+  const result=document.getElementById('findings-import-result');
+  if(result){
+    result.style.color='#2D5016';result.style.fontWeight='600';
+    result.textContent=`✓ ${created} finding${created!==1?'s':''} created — go to each elevation step to review and edit them.`;
   }
 }
 
