@@ -791,7 +791,7 @@ function pgRpt(arr,cols=2,G,MG){
   if(!arr||!arr.length)return'<p style="font-size:11px;color:#888;font-style:italic;padding:6px 0">No photos for this section.</p>';
   return`<div style="display:grid;grid-template-columns:repeat(${cols},1fr);gap:8px;margin:8px 0">`+
     arr.map((p,i)=>`<div style="border:1px solid #ddd;border-radius:4px;overflow:hidden">
-      <img src="${p.url}" style="width:100%;display:block;max-height:200px;object-fit:cover">
+      <img src="${p.url}" style="width:100%;display:block;max-height:340px;object-fit:contain;background:#f0f0f0">
       <div style="font-size:11px;padding:4px 7px;background:#f9f9f9;border-top:1px solid #ddd;color:${p.caption?'#333':'#aaa'};font-style:${p.caption?'normal':'italic'}">${p.caption||'Caption pending AI review'}</div>
     </div>`).join('')+'</div>';
 }
@@ -903,6 +903,98 @@ ${slopeSecs}
   dnld(html,`WR_Storm_${(j.address||'report').replace(/[^a-zA-Z0-9]/g,'_').substring(0,22)}_${j.inspDate||'draft'}.html`);
 }
 
+function retailSummaryPage(j,allFindings,G,LG,MG,RET,RETL,actBadge,findSec){
+  // All findings grouped by location — Front, Right, Rear, Left, Roof
+  const LOCS = [
+    {key:'Front Elevation', label:'Front Elevation'},
+    {key:'Right Elevation', label:'Right Elevation'},
+    {key:'Rear Elevation',  label:'Rear Elevation'},
+    {key:'Left Elevation',  label:'Left Elevation'},
+    {key:'Roof',            label:'Roof'},
+  ];
+
+  // Only include locations that have at least one finding
+  const locGroups = LOCS.map(loc=>{
+    const findings = allFindings.filter(f=>f.loc===loc.key);
+    return {...loc, findings};
+  }).filter(g=>g.findings.length);
+
+  if(!locGroups.length) return '';
+
+  function actionColor(a){
+    return a==='Replace'?'#C0392B':a==='Repair'?'#856404':a==='Monitor'?'#1565C0':'#555';
+  }
+  function actionBg(a){
+    return a==='Replace'?'#FDECEA':a==='Repair'?'#FFF3CD':a==='Monitor'?'#E3F2FD':'#f5f5f5';
+  }
+
+  function sumFinding(f,i){
+    const hasPhotos = f.photos && f.photos.length;
+    return `<div style="border:1px solid #ddd;border-radius:6px;overflow:hidden;margin-bottom:14px;page-break-inside:avoid">
+      <div style="background:${actionBg(f.action)};padding:9px 14px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #ddd">
+        <div style="width:24px;height:24px;background:${G};color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">${i+1}</div>
+        <div style="flex:1">
+          <div style="font-size:13px;font-weight:700;color:${G}">${f.area||'[Surface/Area]'}</div>
+        </div>
+        <span style="background:${actionBg(f.action)};color:${actionColor(f.action)};border:1px solid ${actionColor(f.action)};border-radius:3px;padding:2px 8px;font-size:11px;font-weight:700">${f.action||'—'}</span>
+      </div>
+      <div style="padding:10px 14px;background:#fff">
+        ${f.description?`<div style="font-size:12px;color:#333;margin-bottom:${f.crewNote||f.material?'8px':'0'};line-height:1.6">${f.description}</div>`:''}
+        ${f.crewNote?`<div style="font-size:12px;padding:7px 10px;background:#FFF3CD;border-radius:4px;border-left:3px solid #d4a017;margin-bottom:8px"><strong>Crew Note:</strong> ${f.crewNote}</div>`:''}
+        ${f.material?`<div style="font-size:12px;padding:7px 10px;background:#EBF3FB;border-radius:4px;border-left:3px solid #90CAF9;margin-bottom:8px"><strong>Material:</strong> ${f.material}</div>`:''}
+        ${hasPhotos?`<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:10px">${f.photos.map((p,pi)=>`<div style="border:1px solid #ddd;border-radius:4px;overflow:hidden"><img src="${p.url}" style="width:100%;display:block;max-height:150px;object-fit:contain;background:#f5f5f5"><div style="font-size:10px;color:#888;padding:3px 5px;background:#f9f9f9;text-align:center">${p.caption||'Photo '+(pi+1)}</div></div>`).join('')}</div>`:''}
+      </div>
+    </div>`;
+  }
+
+  const locationSections = locGroups.map(group=>{
+    const repCount   = group.findings.filter(f=>f.action==='Replace').length;
+    const repairCount= group.findings.filter(f=>f.action==='Repair').length;
+    const monCount   = group.findings.filter(f=>f.action==='Monitor').length;
+    const badges = [
+      repCount   ? `<span style="background:#FDECEA;color:#C0392B;border:1px solid #C0392B;border-radius:3px;padding:2px 7px;font-size:10px;font-weight:700;margin-left:6px">${repCount} Replace</span>` : '',
+      repairCount? `<span style="background:#FFF3CD;color:#856404;border:1px solid #d4a017;border-radius:3px;padding:2px 7px;font-size:10px;font-weight:700;margin-left:6px">${repairCount} Repair</span>` : '',
+      monCount   ? `<span style="background:#E3F2FD;color:#1565C0;border:1px solid #90CAF9;border-radius:3px;padding:2px 7px;font-size:10px;font-weight:700;margin-left:6px">${monCount} Monitor</span>` : '',
+    ].join('');
+    return `
+      <div style="margin-bottom:24px">
+        <div style="background:#3a6b1e;color:#fff;padding:9px 16px;border-radius:4px;display:flex;align-items:center;margin-bottom:12px">
+          <span style="font-size:13px;font-weight:700;flex:1">${group.label}</span>
+          ${badges}
+        </div>
+        ${group.findings.map((f,i)=>sumFinding(f,i)).join('')}
+      </div>`;
+  }).join('');
+
+  // Closing recap bullet list
+  const allActionable = allFindings.filter(f=>f.action==='Replace'||f.action==='Repair'||f.action==='Monitor');
+  const recapLines = LOCS.filter(l=>allFindings.some(f=>f.loc===l.key)).map(l=>{
+    const items = allFindings.filter(f=>f.loc===l.key).map(f=>`${f.area||'[area]'} (${f.action})`).join(', ');
+    return `<div style="padding:3px 0">● <strong>${l.label}:</strong> ${items}</div>`;
+  }).join('');
+
+  return `
+    <div style="page-break-before:always;padding:0">
+      <div style="background:${G};padding:18px 36px 14px">
+        <div style="font-size:10px;font-weight:700;color:${MG};letter-spacing:2px;text-transform:uppercase;margin-bottom:4px">HOMEOWNER REVIEW</div>
+        <div style="font-size:22px;font-weight:700;color:#fff">Property Condition Summary</div>
+        <div style="font-size:12px;color:${MG};font-style:italic;margin-top:4px">${j.address||'[Address]'} &nbsp;·&nbsp; ${allFindings.length} finding${allFindings.length!==1?'s':''} across ${locGroups.length} location${locGroups.length!==1?'s':''}</div>
+      </div>
+      <div style="padding:20px 36px">
+        ${locationSections}
+      </div>
+      <div style="background:${LG};border:2px solid ${G};margin:0 36px 20px;padding:14px 18px;border-radius:6px">
+        <div style="font-size:13px;font-weight:700;color:${G};margin-bottom:8px">Walter Roofing — Summary of Findings</div>
+        <div style="font-size:12px;color:#333;line-height:1.8">${recapLines}</div>
+      </div>
+      <div style="border-top:2px solid #ddd;padding:10px 36px;display:flex;justify-content:space-between;font-size:10px;color:#888">
+        <span>Walter Roofing | Clive, IA | walterroofing.com</span>
+        <span>Rep: ${j.repName||''} | ${j.inspDate||''}</span>
+        <span>Property Condition Summary</span>
+      </div>
+    </div>`;
+}
+
 function genRetail(){
   const j=S.job;const{G,LG,MG,css}=rptBase();const tp=countPhotos();
   const RET='#5D4037';const RETL='#EFEBE9';
@@ -981,6 +1073,9 @@ ${shdr('Roof Components','',G)}
 </div>
 <div class="sum"><h3>Summary — ${j.address||'[Address]'}</h3><ul>${sumItems.map(l=>`<li>${l}</li>`).join('')}</ul></div>
 <div class="ftr"><span>Walter Roofing | Clive, IA | walterroofing.com</span><span>Rep: ${j.repName||''} | ${j.inspDate||''}</span><span>Retail Inspection Report</span></div>
+
+${retailSummaryPage(j,allFindings,G,LG,MG,RET,RETL,actBadge,findSec)}
+
 </div></body></html>`;
   dnld(html,`WR_Retail_${(j.address||'report').replace(/[^a-zA-Z0-9]/g,'_').substring(0,22)}_${j.inspDate||'draft'}.html`);
 }
